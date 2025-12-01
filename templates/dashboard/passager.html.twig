@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Passager - Kar&Go{% endblock %}
+
+{% block content %}
+<div class="container-fluid" style="background-color: #1abc9c; padding-top: 40px; padding-bottom: 40px;">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-md-12">
+                <div class="card shadow-lg border-0" style="border-radius: 15px;">
+                    <div class="card-body p-5 text-center">
+                        <div style="font-size: 80px; color: #1abc9c; margin-bottom: 20px;">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <h2 class="mb-3">Bienvenue, {{ app.user.nom }} {{ app.user.prenom }}</h2>
+                        <span class="badge" style="background-color: #27ae60; padding: 10px 20px; font-size: 1rem;">
+                            <i class="fas fa-ticket-alt"></i> Passager
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-md-8">
+                <div class="card shadow-lg border-0" style="border-radius: 15px;">
+                    <div class="card-header" style="background-color: #f8f9fa; border-bottom: 2px solid #1abc9c; border-radius: 15px 15px 0 0;">
+                        <h5 class="mb-0">
+                            <i class="fas fa-info-circle"></i> Informations du compte
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <h6 class="text-muted mb-2"><i class="fas fa-user"></i> Nom</h6>
+                                <p class="h6"><strong>{{ app.user.nom }} {{ app.user.prenom }}</strong></p>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <h6 class="text-muted mb-2"><i class="fas fa-envelope"></i> Email</h6>
+                                <p class="h6"><strong>{{ app.user.email }}</strong></p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-2"><i class="fas fa-phone"></i> Téléphone</h6>
+                                <p class="h6"><strong>{{ app.user.numeroTelephone }}</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-lg border-0" style="border-radius: 15px;">
+                    <div class="card-header" style="background-color: #f8f9fa; border-bottom: 2px solid #27ae60; border-radius: 15px 15px 0 0;">
+                        <h5 class="mb-0"><i class="fas fa-lightning-bolt"></i> Actions rapides</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <button class="btn btn-outline-primary w-100 mb-3" style="border-radius: 8px;" disabled>
+                            <i class="fas fa-search"></i> Rechercher (bientôt)
+                        </button>
+                        <button class="btn btn-outline-success w-100 mb-3" style="border-radius: 8px;" disabled>
+                            <i class="fas fa-ticket-alt"></i> Mes réservations (bientôt)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

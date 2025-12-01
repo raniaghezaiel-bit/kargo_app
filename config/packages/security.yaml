@@ -1,0 +1,51 @@
+security:
+    password_hashers:
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        
+        main:
+            lazy: true
+            provider: app_user_provider
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                enable_csrf: true
+                default_target_path: app_dashboard
+            logout:
+                path: app_logout
+                target: app_home  # ← Redirige vers la page d'accueil après déconnexion
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800
+                path: /
+
+    # ========================================
+    # RÈGLES D'ACCÈS - ORDRE IMPORTANT !
+    # ========================================
+    access_control:
+        # Pages publiques (accessibles sans connexion)
+        - { path: ^/$, roles: PUBLIC_ACCESS }           # Page d'accueil
+        - { path: ^/login, roles: PUBLIC_ACCESS }       # Page de connexion
+        - { path: ^/register, roles: PUBLIC_ACCESS }    # Page d'inscription
+        - { path: ^/search, roles: PUBLIC_ACCESS }      # Recherche de trajets
+        
+        # Pages protégées (nécessitent une connexion)
+        - { path: ^/admin, roles: ROLE_ADMIN }          # Dashboard admin
+        - { path: ^/dashboard, roles: ROLE_USER }       # Dashboard utilisateur
+        
+        # SUPPRIMÉ : - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
+        # Cette ligne bloquait l'accès à la page d'accueil !
+
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_USER]
+        ROLE_PASSAGER: [ROLE_USER]

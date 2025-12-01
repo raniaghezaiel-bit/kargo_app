@@ -1,0 +1,138 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de bord - Kar&Go{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-12">
+        <div class="card card-custom mb-4">
+            <div class="card-body text-center p-5">
+                <div class="mb-4">
+                    <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center" 
+                         style="width: 100px; height: 100px;">
+                        <i class="bi bi-person-fill" style="font-size: 3rem; color: var(--primary-color);"></i>
+                    </div>
+                </div>
+
+                <h2 class="mb-2">Bienvenue, {{ app.user.prenom }} {{ app.user.nom }}</h2>
+                
+                {% if is_granted('ROLE_ADMIN') %}
+                    <span class="badge admin-badge px-3 py-2">
+                        <i class="bi bi-shield-check"></i> Administrateur
+                    </span>
+                {% else %}
+                    <span class="badge passager-badge px-3 py-2">
+                        <i class="bi bi-person"></i> Passager
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-custom">
+            <div class="card-header bg-transparent border-0 pt-4">
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Informations du compte</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded">
+                            <small class="text-muted d-block mb-1">
+                                <i class="bi bi-envelope"></i> Email
+                            </small>
+                            <strong>{{ app.user.email }}</strong>
+                        </div>
+                    </div>
+                    
+                    {% if app.user.telephone %}
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded">
+                            <small class="text-muted d-block mb-1">
+                                <i class="bi bi-telephone"></i> Téléphone
+                            </small>
+                            <strong>{{ app.user.telephone }}</strong>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if app.user.adresse %}
+                    <div class="col-12">
+                        <div class="p-3 bg-light rounded">
+                            <small class="text-muted d-block mb-1">
+                                <i class="bi bi-geo-alt"></i> Adresse
+                            </small>
+                            <strong>{{ app.user.adresse }}</strong>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card card-custom h-100">
+            <div class="card-header bg-transparent border-0 pt-4">
+                <h5 class="mb-0"><i class="bi bi-gear"></i> Actions rapides</h5>
+            </div>
+            <div class="card-body">
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('app_admin_dashboard') }}" class="btn btn-outline-primary w-100 mb-2">
+                        <i class="bi bi-speedometer2"></i> Panneau Admin
+                    </a>
+                {% else %}
+                    <button class="btn btn-outline-primary w-100 mb-2" disabled>
+                        <i class="bi bi-search"></i> Rechercher un trajet
+                    </button>
+                    <button class="btn btn-outline-primary w-100 mb-2" disabled>
+                        <i class="bi bi-ticket"></i> Mes réservations
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if is_granted('ROLE_PASSAGER') and not is_granted('ROLE_ADMIN') %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card card-custom">
+            <div class="card-header bg-transparent border-0 pt-4">
+                <h5 class="mb-0"><i class="bi bi-list-check"></i> Fonctionnalités disponibles</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="p-4 border rounded text-center h-100" style="cursor: not-allowed; opacity: 0.7;">
+                            <i class="bi bi-search" style="font-size: 2rem; color: var(--primary-color);"></i>
+                            <h6 class="mt-3 mb-2">Consulter les trajets</h6>
+                            <small class="text-muted">Voir tous les trajets disponibles</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-4 border rounded text-center h-100" style="cursor: not-allowed; opacity: 0.7;">
+                            <i class="bi bi-ticket-perforated" style="font-size: 2rem; color: var(--primary-color);"></i>
+                            <h6 class="mt-3 mb-2">Réserver un trajet</h6>
+                            <small class="text-muted">Réservez votre place facilement</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-4 border rounded text-center h-100" style="cursor: not-allowed; opacity: 0.7;">
+                            <i class="bi bi-clock-history" style="font-size: 2rem; color: var(--primary-color);"></i>
+                            <h6 class="mt-3 mb-2">Mes réservations</h6>
+                            <small class="text-muted">Gérer vos réservations</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-info mt-4 mb-0">
+                    <i class="bi bi-info-circle"></i> Ces fonctionnalités seront disponibles dans les prochains sprints
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

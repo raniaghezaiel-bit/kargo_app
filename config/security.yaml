@@ -1,0 +1,4 @@
+security:
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_USER]
+        ROLE_PASSAGER: [ROLE_USER]
