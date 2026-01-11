@@ -30,16 +30,18 @@ class Bus
     private ?string $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'bus')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Admin $admin = null;
 
-    // ❌ COMMENTEZ CETTE PARTIE (relation avec Trajet)
-    // #[ORM\OneToMany(targetEntity: Trajet::class, mappedBy: 'bus')]
-    // private Collection $trajets;
+    /**
+     * @var Collection<int, Horaire>
+     */
+    #[ORM\OneToMany(targetEntity: Horaire::class, mappedBy: 'bus')]
+    private Collection $horaires;
 
     public function __construct()
     {
-        // $this->trajets = new ArrayCollection(); // ❌ COMMENTEZ AUSSI
+        $this->horaires = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -91,8 +93,33 @@ class Bus
         return $this;
     }
 
-    // ❌ COMMENTEZ OU SUPPRIMEZ toutes les méthodes getTrajets, addTrajet, removeTrajet
-    
+    /**
+     * @return Collection<int, Horaire>
+     */
+    public function getHoraires(): Collection
+    {
+        return $this->horaires;
+    }
+
+    public function addHoraire(Horaire $horaire): static
+    {
+        if (!$this->horaires->contains($horaire)) {
+            $this->horaires->add($horaire);
+            $horaire->setBus($this);
+        }
+        return $this;
+    }
+
+    public function removeHoraire(Horaire $horaire): static
+    {
+        if ($this->horaires->removeElement($horaire)) {
+            if ($horaire->getBus() === $this) {
+                $horaire->setBus(null);
+            }
+        }
+        return $this;
+    }
+
     public function __toString(): string
     {
         return $this->numero ?? '';

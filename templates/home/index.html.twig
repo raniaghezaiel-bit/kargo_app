@@ -1,121 +1,136 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Kar&Go - Réservation de places de bus{% endblock %}
+{% block title %}Kar&Go - Réservez vos billets de bus en ligne en Tunisie{% endblock %}
 
 {% block body %}
-<!-- Navbar Fixed -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
-    <div class="container-fluid px-5">
-        <a class="navbar-brand d-flex align-items-center" href="{{ path('app_home') }}">
-            <div style="width: 60px; height: 60px; background: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%230ea5e9' d='M20,30h60v30H20z'/%3E%3Ccircle cx='30' cy='70' r='8' fill='%23334155'/%3E%3Ccircle cx='70' cy='70' r='8' fill='%23334155'/%3E%3Crect x='35' y='35' width='10' height='15' fill='%23fff'/%3E%3Crect x='55' y='35' width='10' height='15' fill='%23fff'/%3E%3C/svg%3E" width="45" alt="Kar&Go">
-            </div>
-            <span class="ms-3 fw-bold" style="font-size: 1.5rem; color: #1e293b;">KAR&GO</span>
-        </a>
-        
-        <div class="ms-auto">
-            <a href="{{ path('app_login') }}" class="btn btn-outline-primary me-2 px-4">
-                <i class="bi bi-box-arrow-in-right me-2"></i>Connexion
-            </a>
-            <a href="{{ path('app_register') }}" class="btn btn-primary px-4">
-                <i class="bi bi-person-plus me-2"></i>Inscription
-            </a>
-        </div>
-    </div>
-</nav>
 
-<!-- Hero Section avec Background Gradient -->
-<section class="hero-section" style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 50%, #0369a1 100%); margin-top: 76px; padding: 80px 0 180px 0; position: relative; overflow: hidden;">
-    <div class="position-absolute" style="top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,%3Csvg width=\"100\" height=\"100\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cdefs%3E%3Cpattern id=\"grid\" width=\"40\" height=\"40\" patternUnits=\"userSpaceOnUse\"%3E%3Cpath d=\"M 40 0 L 0 0 0 40\" fill=\"none\" stroke=\"white\" stroke-width=\"0.5\" opacity=\"0.1\"/%3E%3C/pattern%3E%3C/defs%3E%3Crect width=\"100\" height=\"100\" fill=\"url(%23grid)\" /%3E%3C/svg%3E'); opacity: 0.3;"></div>
-    
-    <div class="container position-relative" style="z-index: 10;">
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
         <div class="row align-items-center">
-            <div class="col-lg-7">
-                <h1 class="display-4 fw-bold text-white mb-4" style="line-height: 1.2;">
-                    Kar&Go : trouvez des billets de bus à petits prix pour votre destination
+            <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
+                <h1 class="hero-title">
+                    Trouvez des billets de bus à petits prix pour votre destination
                 </h1>
-                <p class="lead text-white mb-0" style="font-size: 1.1rem; opacity: 0.95;">
-                    Réservez votre prochain trajet en un clin d'œil avec Kar&Go
+                <p class="hero-subtitle">
+                    Comparez et réservez votre prochain trajet en un clin d'œil partout en Tunisie
                 </p>
-            </div>
-            <div class="col-lg-5 text-end d-none d-lg-block">
-                <div style="font-size: 300px; color: rgba(255,255,255,0.15); line-height: 1;">
-                    <i class="bi bi-bus-front-fill"></i>
-                </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Formulaire de Recherche (Floating Card) -->
-<section style="margin-top: -120px; position: relative; z-index: 100;">
+<!-- Search Card Section -->
+<section style="margin-top: -80px; padding-bottom: 80px; position: relative; z-index: 100;">
     <div class="container">
-        <div class="card shadow-lg border-0" style="border-radius: 16px; overflow: hidden;">
-            <div class="card-body p-4">
-                <!-- Onglet Bus -->
-                <div class="mb-4">
-                    <button class="btn btn-link text-decoration-none" style="color: #0ea5e9; font-weight: 600; font-size: 1.1rem;">
-                        <i class="bi bi-bus-front-fill me-2"></i>Bus
-                    </button>
-                </div>
-
-                <form action="{{ path('app_search_trajet') }}" method="GET">
-                    <div class="row g-3 align-items-end">
-                        <!-- Départ -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold mb-2" style="font-size: 0.9rem; color: #1e293b;">
-                                <i class="bi bi-geo-alt-fill me-1" style="color: #0ea5e9;"></i>Départ
-                            </label>
-                            <div class="input-group input-group-lg">
-                                <span class="input-group-text bg-white border-end-0">
-                                    <i class="bi bi-geo-alt-fill" style="color: #0ea5e9;"></i>
-                                </span>
-                                <input type="text" name="depart" class="form-control form-control-lg border-start-0" placeholder="Tunis" required style="font-size: 1rem;">
-                            </div>
+        <div class="search-card" data-aos="fade-up">
+            <!-- Tabs -->
+            <div class="search-tabs">
+                <button class="search-tab active">
+                    <i class="fas fa-bus"></i> Bus
+                </button>
+            </div>
+            
+            <form action="{{ path('app_search_trajet') }}" method="GET">
+                <div class="row g-3">
+                    <!-- Départ -->
+                    <div class="col-md-6 position-relative">
+                        <label class="form-label">
+                            <i class="fas fa-map-marker-alt" style="color: var(--primary);"></i> 
+                            Ville de départ
+                        </label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">
+                                <i class="fas fa-circle"></i>
+                            </span>
+                            <input 
+                                type="text" 
+                                name="depart" 
+                                class="form-control" 
+                                placeholder="D'où partez-vous ?" 
+                                value="Tunis" 
+                                required
+                                autocomplete="off"
+                            >
                         </div>
-
-                        <!-- Bouton Swap -->
-                        <div class="col-auto d-none d-md-block" style="margin-bottom: 8px;">
-                            <button type="button" class="btn btn-light rounded-circle" style="width: 48px; height: 48px; padding: 0; border: 2px solid #e2e8f0;">
-                                <i class="bi bi-arrow-left-right" style="color: #64748b;"></i>
-                            </button>
+                        
+                        <!-- Swap Button -->
+                        <button type="button" class="swap-btn" title="Inverser départ et arrivée">
+                            <i class="fas fa-exchange-alt"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Arrivée -->
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            <i class="fas fa-map-marker-alt" style="color: var(--error);"></i> 
+                            Ville d'arrivée
+                        </label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </span>
+                            <input 
+                                type="text" 
+                                name="arrivee" 
+                                class="form-control" 
+                                placeholder="Où allez-vous ?" 
+                                value="Sfax" 
+                                required
+                                autocomplete="off"
+                            >
                         </div>
-
-                        <!-- Arrivée -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold mb-2" style="font-size: 0.9rem; color: #1e293b;">
-                                <i class="bi bi-geo-alt-fill me-1" style="color: #ef4444;"></i>Arrivée
-                            </label>
-                            <div class="input-group input-group-lg">
-                                <span class="input-group-text bg-white border-end-0">
-                                    <i class="bi bi-geo-alt-fill" style="color: #ef4444;"></i>
-                                </span>
-                                <input type="text" name="arrivee" class="form-control form-control-lg border-start-0" placeholder="Sfax" required style="font-size: 1rem;">
-                            </div>
+                    </div>
+                    
+                    <!-- Date départ -->
+                    <div class="col-md-4">
+                        <label class="form-label">
+                            <i class="fas fa-calendar-alt" style="color: var(--accent);"></i> 
+                            Date de départ
+                        </label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">
+                                <i class="fas fa-calendar"></i>
+                            </span>
+                            <input 
+                                type="date" 
+                                name="date" 
+                                class="form-control" 
+                                value="{{ "now"|date("Y-m-d") }}" 
+                                required
+                            >
                         </div>
-
-                        <!-- Date de départ -->
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold mb-2" style="font-size: 0.9rem; color: #1e293b;">
-                                <i class="bi bi-calendar3 me-1" style="color: #0ea5e9;"></i>Date
-                            </label>
-                            <input type="date" name="date" class="form-control form-control-lg" value="{{ "now"|date("Y-m-d") }}" required>
+                    </div>
+                    
+                    <!-- Date retour -->
+                    <div class="col-md-4">
+                        <label class="form-label">
+                            <i class="fas fa-calendar-alt" style="color: var(--warning);"></i> 
+                            Date de retour <span style="color: var(--gray-400); font-size: 0.875rem;">(facultatif)</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">
+                                <i class="fas fa-calendar"></i>
+                            </span>
+                            <input 
+                                type="date" 
+                                name="date_retour" 
+                                class="form-control"
+                            >
                         </div>
-
-                        <!-- Date de retour -->
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold mb-2" style="font-size: 0.9rem; color: #1e293b;">
-                                <i class="bi bi-calendar-check me-1" style="color: #f59e0b;"></i>Date de retour
-                            </label>
-                            <input type="date" name="date_retour" class="form-control form-control-lg" placeholder="mm/dd/yyyy">
-                        </div>
-
-                        <!-- Passagers -->
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold mb-2" style="font-size: 0.9rem; color: #1e293b;">
-                                <i class="bi bi-people-fill me-1" style="color: #10b981;"></i>Passagers
-                            </label>
-                            <select name="passagers" class="form-select form-select-lg">
+                    </div>
+                    
+                    <!-- Passagers -->
+                    <div class="col-md-4">
+                        <label class="form-label">
+                            <i class="fas fa-users" style="color: var(--secondary);"></i> 
+                            Nombre de passagers
+                        </label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <select name="passagers" class="form-control">
                                 <option value="1">1 passager</option>
                                 <option value="2">2 passagers</option>
                                 <option value="3">3 passagers</option>
@@ -123,305 +138,384 @@
                                 <option value="5">5+ passagers</option>
                             </select>
                         </div>
-
-                        <!-- Bouton Rechercher -->
-                        <div class="col-12 mt-4">
-                            <button type="submit" class="btn btn-lg w-100" style="background: #0ea5e9; color: white; font-weight: 600; padding: 16px; border-radius: 8px; font-size: 1.1rem;">
-                                <i class="bi bi-search me-2"></i>Rechercher
-                            </button>
-                        </div>
                     </div>
-                </form>
-            </div>
+                </div>
+                
+                <!-- Search Button -->
+                <button type="submit" class="btn btn-search mt-4">
+                    <i class="fas fa-search"></i> Rechercher des billets
+                </button>
+            </form>
         </div>
     </div>
 </section>
 
-<!-- Section Avantages (3 colonnes) - FOND BLANC -->
-<section class="py-5 my-5" style="background: white;">
-    <div class="container">
-        <div class="row g-4 text-center">
-            <div class="col-md-4">
-                <div class="mb-3">
-                    <div class="mx-auto d-flex align-items-center justify-content-center" style="width: 100px; height: 100px; background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-radius: 50%;">
-                        <i class="bi bi-people-fill" style="font-size: 3rem; color: #0284c7;"></i>
-                    </div>
-                </div>
-                <h5 class="fw-bold mb-2" style="color: #1e293b;">Rejoignez plus de 1000 voyageurs</h5>
-                <p style="color: #64748b;">réservant plus de 500 trajets dans toute la Tunisie</p>
-            </div>
-            <div class="col-md-4">
-                <div class="mb-3">
-                    <div class="mx-auto d-flex align-items-center justify-content-center" style="width: 100px; height: 100px; background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-radius: 50%;">
-                        <i class="bi bi-headset" style="font-size: 3rem; color: #0284c7;"></i>
-                    </div>
-                </div>
-                <h5 class="fw-bold mb-2" style="color: #1e293b;">Profitez de notre service client</h5>
-                <p style="color: #64748b;">disponible 24 h/24 et 7 j/7 pour vous aider à chaque étape</p>
-            </div>
-            <div class="col-md-4">
-                <div class="mb-3">
-                    <div class="mx-auto d-flex align-items-center justify-content-center" style="width: 100px; height: 100px; background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-radius: 50%;">
-                        <i class="bi bi-arrow-clockwise" style="font-size: 3rem; color: #0284c7;"></i>
-                    </div>
-                </div>
-                <h5 class="fw-bold mb-2" style="color: #1e293b;">Annulez à tout moment</h5>
-                <p style="color: #64748b;">et recevez un remboursement intégral, sans avoir à fournir de raison</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Trajets Populaires -->
-<section class="py-5 bg-light">
-    <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="fw-bold mb-2" style="color: #1e293b;">Trajets populaires en Tunisie</h2>
-            <p class="text-muted">Découvrez nos destinations les plus réservées</p>
-        </div>
-
-        <div class="row g-4">
-            <!-- Tunis → Sfax -->
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body p-4">
-                        <h5 class="fw-bold mb-3" style="color: #1e293b;">
-                            Tunis <i class="bi bi-arrow-right mx-2" style="color: #0ea5e9;"></i> Sfax
-                        </h5>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="text-muted small">
-                                <i class="bi bi-clock me-1"></i>3h 30min
-                                <span class="mx-2">•</span>
-                                <i class="bi bi-signpost me-1"></i>270 km
-                            </div>
-                            <h3 class="mb-0" style="color: #0ea5e9; font-weight: 700;">15 DT</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tunis → Sousse -->
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body p-4">
-                        <h5 class="fw-bold mb-3" style="color: #1e293b;">
-                            Tunis <i class="bi bi-arrow-right mx-2" style="color: #0ea5e9;"></i> Sousse
-                        </h5>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="text-muted small">
-                                <i class="bi bi-clock me-1"></i>2h 00min
-                                <span class="mx-2">•</span>
-                                <i class="bi bi-signpost me-1"></i>140 km
-                            </div>
-                            <h3 class="mb-0" style="color: #0ea5e9; font-weight: 700;">10 DT</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tunis → Gabès -->
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body p-4">
-                        <h5 class="fw-bold mb-3" style="color: #1e293b;">
-                            Tunis <i class="bi bi-arrow-right mx-2" style="color: #0ea5e9;"></i> Gabès
-                        </h5>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="text-muted small">
-                                <i class="bi bi-clock me-1"></i>5h 30min
-                                <span class="mx-2">•</span>
-                                <i class="bi bi-signpost me-1"></i>405 km
-                            </div>
-                            <h3 class="mb-0" style="color: #0ea5e9; font-weight: 700;">25 DT</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sfax → Sousse -->
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body p-4">
-                        <h5 class="fw-bold mb-3" style="color: #1e293b;">
-                            Sfax <i class="bi bi-arrow-right mx-2" style="color: #0ea5e9;"></i> Sousse
-                        </h5>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="text-muted small">
-                                <i class="bi bi-clock me-1"></i>2h 30min
-                                <span class="mx-2">•</span>
-                                <i class="bi bi-signpost me-1"></i>130 km
-                            </div>
-                            <h3 class="mb-0" style="color: #0ea5e9; font-weight: 700;">12 DT</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tunis → Bizerte -->
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body p-4">
-                        <h5 class="fw-bold mb-3" style="color: #1e293b;">
-                            Tunis <i class="bi bi-arrow-right mx-2" style="color: #0ea5e9;"></i> Bizerte
-                        </h5>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="text-muted small">
-                                <i class="bi bi-clock me-1"></i>1h 15min
-                                <span class="mx-2">•</span>
-                                <i class="bi bi-signpost me-1"></i>65 km
-                            </div>
-                            <h3 class="mb-0" style="color: #0ea5e9; font-weight: 700;">8 DT</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tunis → Kairouan -->
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body p-4">
-                        <h5 class="fw-bold mb-3" style="color: #1e293b;">
-                            Tunis <i class="bi bi-arrow-right mx-2" style="color: #0ea5e9;"></i> Kairouan
-                        </h5>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="text-muted small">
-                                <i class="bi bi-clock me-1"></i>1h 45min
-                                <span class="mx-2">•</span>
-                                <i class="bi bi-signpost me-1"></i>160 km
-                            </div>
-                            <h3 class="mb-0" style="color: #0ea5e9; font-weight: 700;">11 DT</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Pourquoi Choisir Kar&Go - FOND GRIS CLAIR -->
-<section class="py-5 my-5" style="background: #f8fafc;">
-    <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="fw-bold mb-2" style="color: #1e293b;">Pourquoi choisir Kar&Go ?</h2>
-            <p class="text-muted">Voyagez en toute confiance avec la meilleure plateforme de réservation</p>
-        </div>
-
-        <div class="row g-4">
-            <!-- Réservation rapide -->
-            <div class="col-md-4">
-                <div class="text-center p-4 bg-white rounded shadow-sm h-100">
-                    <div class="mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 100px; height: 100px; background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); border-radius: 50%;">
-                        <i class="bi bi-lightning-charge-fill text-white" style="font-size: 3rem;"></i>
-                    </div>
-                    <h5 class="fw-bold mb-3" style="color: #1e293b;">Réservation rapide</h5>
-                    <p style="color: #64748b;">Réservez votre billet en moins de 2 minutes</p>
-                </div>
-            </div>
-
-            <!-- Paiement sécurisé -->
-            <div class="col-md-4">
-                <div class="text-center p-4 bg-white rounded shadow-sm h-100">
-                    <div class="mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 100px; height: 100px; background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); border-radius: 50%;">
-                        <i class="bi bi-shield-fill-check text-white" style="font-size: 3rem;"></i>
-                    </div>
-                    <h5 class="fw-bold mb-3" style="color: #1e293b;">Paiement sécurisé</h5>
-                    <p style="color: #64748b;">Vos transactions sont 100% sécurisées</p>
-                </div>
-            </div>
-
-            <!-- Ticket QR Code -->
-            <div class="col-md-4">
-                <div class="text-center p-4 bg-white rounded shadow-sm h-100">
-                    <div class="mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 100px; height: 100px; background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); border-radius: 50%;">
-                        <i class="bi bi-qr-code text-white" style="font-size: 3rem;"></i>
-                    </div>
-                    <h5 class="fw-bold mb-3" style="color: #1e293b;">Ticket QR Code</h5>
-                    <p style="color: #64748b;">Recevez votre billet par email avec QR code</p>
-                </div>
-            </div>
-
-            <!-- Support 24/7 -->
-            <div class="col-md-4">
-                <div class="text-center p-4 bg-white rounded shadow-sm h-100">
-                    <div class="mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 100px; height: 100px; background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); border-radius: 50%;">
-                        <i class="bi bi-headset text-white" style="font-size: 3rem;"></i>
-                    </div>
-                    <h5 class="fw-bold mb-3" style="color: #1e293b;">Support 24/7</h5>
-                    <p style="color: #64748b;">Notre équipe est à votre disposition</p>
-                </div>
-            </div>
-
-            <!-- Annulation gratuite -->
-            <div class="col-md-4">
-                <div class="text-center p-4 bg-white rounded shadow-sm h-100">
-                    <div class="mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 100px; height: 100px; background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); border-radius: 50%;">
-                        <i class="bi bi-arrow-clockwise text-white" style="font-size: 3rem;"></i>
-                    </div>
-                    <h5 class="fw-bold mb-3" style="color: #1e293b;">Annulation gratuite</h5>
-                    <p style="color: #64748b;">Annulez ou modifiez votre réservation facilement</p>
-                </div>
-            </div>
-
-            <!-- Meilleurs prix -->
-            <div class="col-md-4">
-                <div class="text-center p-4 bg-white rounded shadow-sm h-100">
-                    <div class="mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 100px; height: 100px; background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); border-radius: 50%;">
-                        <i class="bi bi-tag-fill text-white" style="font-size: 3rem;"></i>
-                    </div>
-                    <h5 class="fw-bold mb-3" style="color: #1e293b;">Meilleurs prix garantis</h5>
-                    <p style="color: #64748b;">Comparez et trouvez les meilleurs tarifs</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Footer -->
-<footer class="bg-dark text-white py-4 mt-5">
+<!-- Trust Badges Section -->
+<section class="trust-section">
     <div class="container">
         <div class="row">
-            <div class="col-md-6">
-                <h5 class="fw-bold mb-3">
-                    <i class="bi bi-bus-front-fill me-2"></i>KAR&GO
-                </h5>
-                <p style="color: #9ca3af;">
-                    La plateforme de réservation de bus en Tunisie.<br>
-                    Voyagez en toute simplicité.
-                </p>
+            <div class="col-md-4 mb-4 mb-md-0" data-aos="fade-up" data-aos-delay="100">
+                <div class="trust-badge">
+                    <div class="badge-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h5>Plus de 1000 voyageurs satisfaits</h5>
+                    <p>Rejoignez notre communauté et profitez de plus de 500 trajets disponibles partout en Tunisie</p>
+                </div>
             </div>
-            <div class="col-md-6 text-md-end">
-                <p class="mb-2">
-                    <i class="bi bi-envelope me-2"></i>contact@kargo.tn
-                </p>
-                <p class="mb-2">
-                    <i class="bi bi-telephone me-2"></i>+216 XX XXX XXX
-                </p>
+            
+            <div class="col-md-4 mb-4 mb-md-0" data-aos="fade-up" data-aos-delay="200">
+                <div class="trust-badge">
+                    <div class="badge-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h5>Service client 24h/24 et 7j/7</h5>
+                    <p>Notre équipe est disponible à tout moment pour répondre à vos questions et vous assister</p>
+                </div>
             </div>
-        </div>
-        <hr class="bg-secondary my-3">
-        <div class="text-center">
-            <small style="color: #9ca3af;">&copy; 2025 Kar&Go. Tous droits réservés.</small>
+            
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="trust-badge">
+                    <div class="badge-icon">
+                        <i class="fas fa-undo-alt"></i>
+                    </div>
+                    <h5>Annulation flexible et gratuite</h5>
+                    <p>Modifiez ou annulez votre réservation facilement et recevez un remboursement intégral</p>
+                </div>
+            </div>
         </div>
     </div>
-</footer>
+</section>
 
-<style>
-    body {
-        padding-top: 0 !important;
-    }
-    
-    .form-control:focus, .form-select:focus {
-        border-color: #0ea5e9;
-        box-shadow: 0 0 0 0.2rem rgba(14, 165, 233, 0.25);
-    }
-    
-    .card {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    
-    .card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 24px rgba(0,0,0,0.15) !important;
-    }
-</style>
+<!-- Popular Routes Section -->
+<section class="routes-section" id="popular-routes">
+    <div class="container">
+        <h2 class="section-title" data-aos="fade-up">Trajets populaires en Tunisie</h2>
+        <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">
+            Découvrez nos destinations les plus prisées et réservez votre billet dès maintenant
+        </p>
+        
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="route-card">
+                    <div class="route-header">
+                        <div>
+                            <div class="route-cities">
+                                Tunis <span class="route-arrow"><i class="fas fa-arrow-right"></i></span> Sfax
+                            </div>
+                            <div class="route-info">
+                                <span><i class="fas fa-clock"></i> 3h 30min</span>
+                                <span><i class="fas fa-road"></i> 270 km</span>
+                            </div>
+                        </div>
+                        <div class="route-price">
+                            15 DT
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="150">
+                <div class="route-card">
+                    <div class="route-header">
+                        <div>
+                            <div class="route-cities">
+                                Tunis <span class="route-arrow"><i class="fas fa-arrow-right"></i></span> Sousse
+                            </div>
+                            <div class="route-info">
+                                <span><i class="fas fa-clock"></i> 2h 00min</span>
+                                <span><i class="fas fa-road"></i> 140 km</span>
+                            </div>
+                        </div>
+                        <div class="route-price">
+                            10 DT
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="route-card">
+                    <div class="route-header">
+                        <div>
+                            <div class="route-cities">
+                                Tunis <span class="route-arrow"><i class="fas fa-arrow-right"></i></span> Gabès
+                            </div>
+                            <div class="route-info">
+                                <span><i class="fas fa-clock"></i> 5h 30min</span>
+                                <span><i class="fas fa-road"></i> 405 km</span>
+                            </div>
+                        </div>
+                        <div class="route-price">
+                            25 DT
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="250">
+                <div class="route-card">
+                    <div class="route-header">
+                        <div>
+                            <div class="route-cities">
+                                Sfax <span class="route-arrow"><i class="fas fa-arrow-right"></i></span> Sousse
+                            </div>
+                            <div class="route-info">
+                                <span><i class="fas fa-clock"></i> 2h 30min</span>
+                                <span><i class="fas fa-road"></i> 130 km</span>
+                            </div>
+                        </div>
+                        <div class="route-price">
+                            12 DT
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="route-card">
+                    <div class="route-header">
+                        <div>
+                            <div class="route-cities">
+                                Tunis <span class="route-arrow"><i class="fas fa-arrow-right"></i></span> Bizerte
+                            </div>
+                            <div class="route-info">
+                                <span><i class="fas fa-clock"></i> 1h 15min</span>
+                                <span><i class="fas fa-road"></i> 65 km</span>
+                            </div>
+                        </div>
+                        <div class="route-price">
+                            8 DT
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="350">
+                <div class="route-card">
+                    <div class="route-header">
+                        <div>
+                            <div class="route-cities">
+                                Tunis <span class="route-arrow"><i class="fas fa-arrow-right"></i></span> Kairouan
+                            </div>
+                            <div class="route-info">
+                                <span><i class="fas fa-clock"></i> 1h 45min</span>
+                                <span><i class="fas fa-road"></i> 160 km</span>
+                            </div>
+                        </div>
+                        <div class="route-price">
+                            11 DT
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section" id="features">
+    <div class="container">
+        <h2 class="section-title" data-aos="fade-up">Pourquoi choisir Kar&Go ?</h2>
+        <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">
+            Une expérience de réservation simple, rapide et sécurisée pour tous vos déplacements
+        </p>
+        
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h4>Réservation instantanée</h4>
+                    <p>Réservez votre billet en moins de 2 minutes grâce à notre interface intuitive et rapide</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="150">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h4>Paiement 100% sécurisé</h4>
+                    <p>Toutes vos transactions sont protégées par un système de cryptage avancé</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
+                    <h4>Billet électronique QR Code</h4>
+                    <p>Recevez instantanément votre billet par email avec un QR code à scanner</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="250">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h4>Support disponible 24/7</h4>
+                    <p>Une équipe dédiée pour répondre à toutes vos questions à tout moment</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-undo-alt"></i>
+                    </div>
+                    <h4>Modification et annulation</h4>
+                    <p>Changez vos plans facilement avec notre politique d'annulation flexible</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="350">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <h4>Prix les plus compétitifs</h4>
+                    <p>Comparez les prix et profitez des meilleurs tarifs du marché tunisien</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Reviews Section -->
+<section class="reviews-section">
+    <div class="container">
+        <h2 class="section-title" data-aos="fade-up">Ce que disent nos voyageurs</h2>
+        <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">
+            Découvrez les avis authentiques de voyageurs tunisiens qui nous font confiance
+        </p>
+        
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="reviewer-info">
+                            <h5 class="reviewer-name">Mohamed Ben Ali</h5>
+                            <p class="reviewer-location">
+                                <i class="fas fa-map-marker-alt"></i> Tunis
+                            </p>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="review-text">
+                        Service exceptionnel ! J'ai réservé mon billet en quelques minutes et je l'ai reçu directement sur mon téléphone. Plus besoin de perdre du temps à la gare.
+                    </p>
+                    <div class="review-date">
+                        <i class="far fa-clock"></i> Il y a 1 semaine
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="150">
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="reviewer-info">
+                            <h5 class="reviewer-name">Fatma Sfaxia</h5>
+                            <p class="reviewer-location">
+                                <i class="fas fa-map-marker-alt"></i> Sfax
+                            </p>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="review-text">
+                        J'utilise Kar&Go pour tous mes déplacements entre Sfax et Tunis. Les prix sont excellents et le service est toujours fiable. Je recommande vivement !
+                    </p>
+                    <div class="review-date">
+                        <i class="far fa-clock"></i> Il y a 3 jours
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="reviewer-info">
+                            <h5 class="reviewer-name">Karim Sahli</h5>
+                            <p class="reviewer-location">
+                                <i class="fas fa-map-marker-alt"></i> Sousse
+                            </p>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <p class="review-text">
+                        Plateforme très pratique et moderne. L'application est intuitive et le support client répond rapidement en cas de besoin. Excellent travail !
+                    </p>
+                    <div class="review-date">
+                        <i class="far fa-clock"></i> Il y a 2 semaines
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content text-center text-white" data-aos="zoom-in">
+            <h2 class="display-4 fw-bold mb-4">Prêt à voyager avec Kar&Go ?</h2>
+            <p class="lead mb-5">
+                Rejoignez des milliers de voyageurs qui font confiance à notre plateforme pour leurs déplacements en Tunisie
+            </p>
+            {% if not app.user %}
+                <a href="{{ path('app_register') }}" class="btn btn-light btn-lg px-5 py-3" style="border-radius: 12px; font-weight: 700; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                    <i class="fas fa-rocket"></i> Créer un compte gratuitement
+                </a>
+            {% else %}
+                <a href="{{ path('app_search_trajet') }}" class="btn btn-light btn-lg px-5 py-3" style="border-radius: 12px; font-weight: 700; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                    <i class="fas fa-search"></i> Rechercher un trajet maintenant
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({
+        duration: 800,
+        once: true,
+        offset: 100
+    });
+</script>
 {% endblock %}

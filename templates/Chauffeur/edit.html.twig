@@ -1,0 +1,371 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier {{ chauffeur.nomComplet }} - Kar&Go Admin{% endblock %}
+
+{% block body %}
+<div class="admin-container">
+    <div class="container py-4">
+        
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{{ path('admin_chauffeur_index') }}">
+                        <i class="fas fa-user-tie"></i> Chauffeurs
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{{ path('admin_chauffeur_show', {'id': chauffeur.id}) }}">
+                        {{ chauffeur.nomComplet }}
+                    </a>
+                </li>
+                <li class="breadcrumb-item active">Modifier</li>
+            </ol>
+        </nav>
+
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h3 mb-2">
+                    <i class="fas fa-edit text-warning"></i> Modifier le chauffeur
+                </h1>
+                <p class="text-muted mb-0">
+                    Modification de <strong>{{ chauffeur.nomComplet }}</strong>
+                </p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{{ path('admin_chauffeur_show', {'id': chauffeur.id}) }}" class="btn btn-secondary">
+                    <i class="fas fa-eye"></i> Voir la fiche
+                </a>
+                <a href="{{ path('admin_chauffeur_index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+        </div>
+
+        <!-- Formulaire -->
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="card">
+                    <div class="card-body p-4">
+                        {{ form_start(form) }}
+                        
+                        <!-- Section 0 : Photo du chauffeur -->
+                        <div class="form-section mb-4">
+                            <h5 class="section-title">
+                                <i class="fas fa-camera"></i> Photo du chauffeur
+                            </h5>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="photo-upload-container">
+                                        <!-- Prévisualisation de la photo -->
+                                        <div class="photo-preview-wrapper">
+                                            {% if chauffeur.photo %}
+                                                <img src="{{ asset('uploads/chauffeurs/' ~ chauffeur.photo) }}" 
+                                                     id="photoPreview" 
+                                                     class="photo-preview-image" 
+                                                     alt="{{ chauffeur.nomComplet }}">
+                                            {% else %}
+                                                <div id="photoPreview" class="photo-preview-placeholder">
+                                                    <i class="fas fa-user fa-4x text-muted"></i>
+                                                    <p class="mt-3 text-muted">Aucune photo</p>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <!-- Champ upload -->
+                                        <div class="photo-upload-field">
+                                            {{ form_row(form.photoFile) }}
+                                            <div class="upload-instructions mt-2">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-info-circle"></i>
+                                                    Sélectionnez une nouvelle photo pour la remplacer
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 1 : Informations personnelles -->
+                        <div class="form-section mb-4">
+                            <h5 class="section-title">
+                                <i class="fas fa-user"></i> Informations personnelles
+                            </h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    {{ form_row(form.nom) }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form_row(form.prenom) }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form_row(form.cin) }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form_row(form.dateNaissance) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 2 : Coordonnées -->
+                        <div class="form-section mb-4">
+                            <h5 class="section-title">
+                                <i class="fas fa-address-card"></i> Coordonnées
+                            </h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    {{ form_row(form.telephone) }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form_row(form.email) }}
+                                </div>
+                                <div class="col-md-8">
+                                    {{ form_row(form.adresse) }}
+                                </div>
+                                <div class="col-md-4">
+                                    {{ form_row(form.ville) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 3 : Informations sur le permis -->
+                        <div class="form-section mb-4">
+                            <h5 class="section-title">
+                                <i class="fas fa-id-card"></i> Informations sur le permis de conduire
+                            </h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    {{ form_row(form.numeroPermis) }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form_row(form.typePermis) }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form_row(form.dateDelivrancePermis) }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form_row(form.dateExpirationPermis) }}
+                                    {% if not chauffeur.permisValide %}
+                                        <div class="alert alert-danger mt-2 py-2">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                            <strong>Attention :</strong> Le permis est expiré !
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 4 : Statut et notes -->
+                        <div class="form-section mb-4">
+                            <h5 class="section-title">
+                                <i class="fas fa-cog"></i> Statut et notes
+                            </h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    {{ form_row(form.statut) }}
+                                </div>
+                                <div class="col-12">
+                                    {{ form_row(form.notes) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Informations de modification -->
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Dernière modification :</strong>
+                            {% if chauffeur.dateModification %}
+                                {{ chauffeur.dateModification|date('d/m/Y à H:i') }}
+                            {% else %}
+                                Jamais modifié
+                            {% endif %}
+                        </div>
+
+                        <!-- Boutons d'action -->
+                        <div class="form-actions d-flex gap-2 justify-content-end pt-3 border-top">
+                            <a href="{{ path('admin_chauffeur_show', {'id': chauffeur.id}) }}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-warning text-white">
+                                <i class="fas fa-save"></i> Enregistrer les modifications
+                            </button>
+                        </div>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .admin-container {
+        background: #f8fafc;
+        min-height: 100vh;
+        padding-top: 80px;
+    }
+    
+    .breadcrumb {
+        background: white;
+        padding: 0.75rem 1.25rem;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    
+    .breadcrumb-item a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+    
+    .form-section {
+        padding: 1.5rem;
+        background: #f8fafc;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+    }
+    
+    .section-title {
+        color: var(--gray-800);
+        font-weight: 700;
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--warning);
+    }
+    
+    .section-title i {
+        color: var(--warning);
+        margin-right: 0.5rem;
+    }
+    
+    /* Styles pour l'upload de photo */
+    .photo-upload-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+    }
+    
+    .photo-preview-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .photo-preview-placeholder {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        background: white;
+        border: 3px dashed #cbd5e1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    
+    .photo-preview-image {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid var(--primary);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    
+    .photo-upload-field {
+        width: 100%;
+        max-width: 500px;
+        text-align: center;
+    }
+    
+    .upload-instructions {
+        padding: 0.75rem;
+        background: #fef3c7;
+        border-radius: 8px;
+        border-left: 4px solid #f59e0b;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: var(--gray-700);
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-control, .form-select {
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0.625rem 0.875rem;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: var(--warning);
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+    }
+    
+    .form-actions {
+        background: #f8fafc;
+        padding: 1.5rem;
+        margin: 0 -1.5rem -1.5rem;
+        border-radius: 0 0 12px 12px;
+    }
+    
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+</style>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const photoInput = document.querySelector('input[type="file"]');
+        const previewContainer = document.getElementById('photoPreview');
+        
+        if (photoInput) {
+            photoInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                
+                if (file) {
+                    // Vérifier si c'est une image
+                    if (!file.type.startsWith('image/')) {
+                        alert('Veuillez sélectionner une image valide (JPG, PNG)');
+                        return;
+                    }
+                    
+                    // Vérifier la taille (2 Mo max)
+                    if (file.size > 2 * 1024 * 1024) {
+                        alert('La taille de l\'image ne doit pas dépasser 2 Mo');
+                        return;
+                    }
+                    
+                    // Créer la prévisualisation
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        // Si c'est une image, la remplacer
+                        if (previewContainer.tagName === 'IMG') {
+                            previewContainer.src = e.target.result;
+                        } else {
+                            // Si c'était un placeholder, le remplacer par une image
+                            previewContainer.outerHTML = '<img src="' + e.target.result + '" id="photoPreview" class="photo-preview-image" alt="Prévisualisation">';
+                        }
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

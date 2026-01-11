@@ -1,0 +1,424 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Chauffeurs - Kar&Go Admin{% endblock %}
+
+{% block body %}
+<div class="admin-container">
+    <div class="container-fluid py-4">
+        
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h3 mb-2">
+                    <i class="fas fa-user-tie text-primary"></i> Gestion des Chauffeurs
+                </h1>
+                <p class="text-muted mb-0">Gérez tous vos chauffeurs en un seul endroit</p>
+            </div>
+            <a href="{{ path('admin_chauffeur_new') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Ajouter un chauffeur
+            </a>
+        </div>
+
+        <!-- Statistiques -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="stat-card stat-card-primary">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">{{ stats.total }}</div>
+                        <div class="stat-label">Total Chauffeurs</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <div class="stat-card stat-card-success">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">{{ stats.actifs }}</div>
+                        <div class="stat-label">Actifs</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <div class="stat-card stat-card-warning">
+                    <div class="stat-icon">
+                        <i class="fas fa-umbrella-beach"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">{{ stats.en_conge }}</div>
+                        <div class="stat-label">En congé</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <div class="stat-card stat-card-danger">
+                    <div class="stat-icon">
+                        <i class="fas fa-ban"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">{{ stats.suspendus }}</div>
+                        <div class="stat-label">Suspendus</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtres et Recherche -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="GET" action="{{ path('admin_chauffeur_index') }}">
+                    <div class="row g-3">
+                        <!-- Recherche -->
+                        <div class="col-md-4">
+                            <label class="form-label">
+                                <i class="fas fa-search"></i> Rechercher
+                            </label>
+                            <input 
+                                type="text" 
+                                name="search" 
+                                class="form-control" 
+                                placeholder="Nom, prénom ou CIN..." 
+                                value="{{ search }}"
+                            >
+                        </div>
+                        
+                        <!-- Filtre par statut -->
+                        <div class="col-md-3">
+                            <label class="form-label">
+                                <i class="fas fa-filter"></i> Statut
+                            </label>
+                            <select name="statut" class="form-control">
+                                <option value="">Tous les statuts</option>
+                                <option value="actif" {% if statut == 'actif' %}selected{% endif %}>Actif</option>
+                                <option value="inactif" {% if statut == 'inactif' %}selected{% endif %}>Inactif</option>
+                                <option value="en_conge" {% if statut == 'en_conge' %}selected{% endif %}>En congé</option>
+                                <option value="suspendu" {% if statut == 'suspendu' %}selected{% endif %}>Suspendu</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Filtre par ville -->
+                        <div class="col-md-3">
+                            <label class="form-label">
+                                <i class="fas fa-map-marker-alt"></i> Ville
+                            </label>
+                            <select name="ville" class="form-control">
+                                <option value="">Toutes les villes</option>
+                                <option value="Tunis" {% if ville == 'Tunis' %}selected{% endif %}>Tunis</option>
+                                <option value="Sfax" {% if ville == 'Sfax' %}selected{% endif %}>Sfax</option>
+                                <option value="Sousse" {% if ville == 'Sousse' %}selected{% endif %}>Sousse</option>
+                                <option value="Kairouan" {% if ville == 'Kairouan' %}selected{% endif %}>Kairouan</option>
+                                <option value="Bizerte" {% if ville == 'Bizerte' %}selected{% endif %}>Bizerte</option>
+                                <option value="Gabès" {% if ville == 'Gabès' %}selected{% endif %}>Gabès</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Boutons -->
+                        <div class="col-md-2 d-flex align-items-end gap-2">
+                            <button type="submit" class="btn btn-primary flex-fill">
+                                <i class="fas fa-search"></i>
+                            </button>
+                            <a href="{{ path('admin_chauffeur_index') }}" class="btn btn-secondary">
+                                <i class="fas fa-redo"></i>
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Liste des chauffeurs -->
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-list"></i> Liste des chauffeurs ({{ chauffeurs|length }})
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                {% if chauffeurs is empty %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-user-slash fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Aucun chauffeur trouvé.</p>
+                        <a href="{{ path('admin_chauffeur_new') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Ajouter le premier chauffeur
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Chauffeur</th>
+                                    <th>CIN</th>
+                                    <th>Contact</th>
+                                    <th>Permis</th>
+                                    <th>Ville</th>
+                                    <th>Statut</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for chauffeur in chauffeurs %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                {% if chauffeur.photo %}
+                                                    <img src="{{ asset('uploads/chauffeurs/' ~ chauffeur.photo) }}" 
+                                                         class="avatar-circle-img me-3" 
+                                                         alt="{{ chauffeur.nomComplet }}">
+                                                {% else %}
+                                                    <div class="avatar-circle me-3">
+                                                        {{ chauffeur.initiales }}
+                                                    </div>
+                                                {% endif %}
+                                                <div>
+                                                    <div class="fw-bold">{{ chauffeur.nomComplet }}</div>
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-birthday-cake"></i> 
+                                                        {{ chauffeur.age }} ans
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-light text-dark">
+                                                {{ chauffeur.cin }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <i class="fas fa-phone text-primary"></i> 
+                                                {{ chauffeur.telephone }}
+                                            </div>
+                                            <small class="text-muted">
+                                                <i class="fas fa-envelope"></i> 
+                                                {{ chauffeur.email }}
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-info">
+                                                Permis {{ chauffeur.typePermis }}
+                                            </span>
+                                            <br>
+                                            <small class="text-muted">
+                                                {{ chauffeur.numeroPermis }}
+                                            </small>
+                                            {% if not chauffeur.permisValide %}
+                                                <br>
+                                                <small class="text-danger">
+                                                    <i class="fas fa-exclamation-triangle"></i> Expiré
+                                                </small>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <i class="fas fa-map-marker-alt text-danger"></i> 
+                                            {{ chauffeur.ville }}
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-{{ chauffeur.statutBadge }}">
+                                                {% if chauffeur.statut == 'actif' %}
+                                                    <i class="fas fa-check-circle"></i> Actif
+                                                {% elseif chauffeur.statut == 'inactif' %}
+                                                    <i class="fas fa-times-circle"></i> Inactif
+                                                {% elseif chauffeur.statut == 'en_conge' %}
+                                                    <i class="fas fa-umbrella-beach"></i> En congé
+                                                {% else %}
+                                                    <i class="fas fa-ban"></i> Suspendu
+                                                {% endif %}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <a href="{{ path('admin_chauffeur_show', {'id': chauffeur.id}) }}" 
+                                                   class="btn btn-outline-primary" 
+                                                   title="Voir les détails">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{{ path('admin_chauffeur_edit', {'id': chauffeur.id}) }}" 
+                                                   class="btn btn-outline-warning" 
+                                                   title="Modifier">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <button type="button" 
+                                                        class="btn btn-outline-danger" 
+                                                        onclick="confirmDelete({{ chauffeur.id }}, '{{ chauffeur.nomComplet }}')"
+                                                        title="Supprimer">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmation de suppression -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle text-danger"></i> 
+                    Confirmer la suppression
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer le chauffeur <strong id="chauffeurName"></strong> ?</p>
+                <p class="text-danger mb-0">
+                    <i class="fas fa-exclamation-circle"></i> 
+                    Cette action est irréversible !
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Annuler
+                </button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    <input type="hidden" name="_token" id="deleteToken">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Supprimer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    function confirmDelete(id, name) {
+        document.getElementById('chauffeurName').textContent = name;
+        document.getElementById('deleteForm').action = '{{ path('admin_chauffeur_index') }}/' + id + '/supprimer';
+        document.getElementById('deleteToken').value = '{{ csrf_token('delete') }}' + id;
+        
+        const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        modal.show();
+    }
+</script>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .admin-container {
+        background: #f8fafc;
+        min-height: 100vh;
+        padding-top: 80px;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    }
+    
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+    }
+    
+    .stat-card-primary .stat-icon {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+    }
+    
+    .stat-card-success .stat-icon {
+        background: linear-gradient(135deg, #10B981, #059669);
+    }
+    
+    .stat-card-warning .stat-icon {
+        background: linear-gradient(135deg, #F59E0B, #D97706);
+    }
+    
+    .stat-card-danger .stat-icon {
+        background: linear-gradient(135deg, #EF4444, #DC2626);
+    }
+    
+    .stat-content {
+        flex: 1;
+    }
+    
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        line-height: 1;
+        margin-bottom: 0.25rem;
+    }
+    
+    .stat-label {
+        font-size: 0.875rem;
+        color: var(--gray-600);
+    }
+    
+    .avatar-circle {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.125rem;
+        flex-shrink: 0;
+    }
+    
+    .avatar-circle-img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--primary);
+        flex-shrink: 0;
+    }
+    
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .table th {
+        font-weight: 600;
+        color: var(--gray-700);
+        border-bottom: 2px solid var(--gray-200);
+    }
+    
+    .btn-group-sm > .btn {
+        padding: 0.375rem 0.75rem;
+    }
+</style>
+{% endblock %}

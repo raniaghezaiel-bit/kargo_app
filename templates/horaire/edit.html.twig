@@ -1,0 +1,445 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier {{ horaire.trajet }} - Kar&Go Admin{% endblock %}
+
+{% block body %}
+<div class="admin-container">
+    <div class="container py-4">
+        
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{{ path('admin_dashboard') }}">
+                        <i class="fas fa-home"></i> Tableau de bord
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{{ path('admin_horaire_index') }}">
+                        <i class="fas fa-clock"></i> Horaires
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{{ path('admin_horaire_show', {'id': horaire.id}) }}">
+                        {{ horaire.trajet }}
+                    </a>
+                </li>
+                <li class="breadcrumb-item active">Modifier</li>
+            </ol>
+        </nav>
+
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h3 mb-2">
+                    {{ horaire.villeDepart }} → {{ horaire.villeArrivee }}
+                </h1>
+                <span class="badge bg-success">
+                    <i class="fas fa-check-circle"></i> {{ horaire.statut|capitalize }}
+                </span>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{{ path('admin_dashboard') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-home"></i> Tableau de bord
+                </a>
+                <a href="{{ path('admin_horaire_show', {'id': horaire.id}) }}" class="btn btn-info text-white">
+                    <i class="fas fa-eye"></i> Voir la fiche
+                </a>
+                <a href="{{ path('admin_horaire_index') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour aux horaires
+                </a>
+            </div>
+        </div>
+
+        <!-- Formulaire -->
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="card">
+                    <div class="card-body p-4">
+                        {{ form_start(form) }}
+                        
+                        <!-- Section 1 : Informations du trajet -->
+                        <div class="form-section mb-4">
+                            <h5 class="section-title">
+                                <i class="fas fa-route"></i> Informations du trajet
+                            </h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    {{ form_row(form.villeDepart, {
+                                        'label': 'Ville de départ',
+                                        'attr': {'class': 'form-control'}
+                                    }) }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form_row(form.villeArrivee, {
+                                        'label': 'Ville d\'arrivée',
+                                        'attr': {'class': 'form-control'}
+                                    }) }}
+                                </div>
+                                <div class="col-md-12">
+                                    {{ form_row(form.distance, {
+                                        'label': 'Distance (km)',
+                                        'attr': {'class': 'form-control'}
+                                    }) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 2 : Horaires -->
+                        <div class="form-section mb-4">
+                            <h5 class="section-title">
+                                <i class="fas fa-clock"></i> Horaires de départ et d'arrivée
+                            </h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    {{ form_row(form.heureDepart, {
+                                        'label': 'Heure de départ',
+                                        'attr': {'class': 'form-control'}
+                                    }) }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form_row(form.heureArrivee, {
+                                        'label': 'Heure d\'arrivée',
+                                        'attr': {'class': 'form-control'}
+                                    }) }}
+                                </div>
+                            </div>
+                            {% if horaire.duree %}
+                                <div class="alert alert-success mt-3">
+                                    <i class="fas fa-check-circle"></i>
+                                    <strong>Durée actuelle :</strong> {{ horaire.duree }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Section 3 : Jours de circulation -->
+                        <div class="form-section mb-4">
+                            <h5 class="section-title">
+                                <i class="fas fa-calendar-week"></i> Jours de circulation
+                            </h5>
+                            <p class="text-muted mb-3">
+                                <i class="fas fa-info-circle"></i> 
+                                Sélectionnez les jours où ce trajet sera disponible
+                            </p>
+                            <div class="jours-selection">
+                                {% for jour in form.joursActifs %}
+                                    <div class="form-check">
+                                        {{ form_widget(jour, {'attr': {'class': 'form-check-input'}}) }}
+                                        {{ form_label(jour, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            {{ form_errors(form.joursActifs) }}
+                        </div>
+
+                        <!-- Section 4 : Prix et configuration -->
+                        <div class="form-section mb-4">
+                            <h5 class="section-title">
+                                <i class="fas fa-cog"></i> Prix et configuration
+                            </h5>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    {{ form_row(form.prix, {
+                                        'label': 'Prix du billet (TND)',
+                                        'attr': {'class': 'form-control'}
+                                    }) }}
+                                </div>
+                                <div class="col-md-4">
+                                    {{ form_row(form.bus, {
+                                        'label': 'Bus assigné',
+                                        'attr': {'class': 'form-control'}
+                                    }) }}
+                                </div>
+                                <div class="col-md-4">
+                                    {{ form_row(form.statut, {
+                                        'label': 'Statut',
+                                        'attr': {'class': 'form-control'}
+                                    }) }}
+                                </div>
+                            </div>
+                            <div class="alert alert-info mt-3">
+                                <i class="fas fa-lightbulb"></i>
+                                <strong>Note :</strong> Le prix sera affiché en dinars tunisiens (TND) aux clients
+                            </div>
+                        </div>
+
+                        <!-- Informations de modification -->
+                        <div class="alert alert-secondary">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Dernière modification :</strong>
+                            {% if horaire.dateModification %}
+                                {{ horaire.dateModification|date('d/m/Y à H:i') }}
+                            {% else %}
+                                Jamais modifié
+                            {% endif %}
+                        </div>
+
+                        <!-- Boutons d'action -->
+                        <div class="form-actions d-flex gap-2 justify-content-end pt-3 border-top">
+                            <a href="{{ path('admin_horaire_show', {'id': horaire.id}) }}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-warning text-white">
+                                <i class="fas fa-save"></i> Enregistrer les modifications
+                            </button>
+                        </div>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .admin-container {
+        background: #f8fafc;
+        min-height: 100vh;
+        padding-top: 80px;
+    }
+    
+    .breadcrumb {
+        background: white;
+        padding: 0.75rem 1.25rem;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    
+    .breadcrumb-item a {
+        color: var(--primary);
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    
+    .breadcrumb-item a:hover {
+        color: var(--warning);
+    }
+    
+    .form-section {
+        padding: 1.5rem;
+        background: #ffffff;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+    }
+    
+    .section-title {
+        color: #1e293b;
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #f59e0b;
+    }
+    
+    .section-title i {
+        color: #f59e0b;
+        margin-right: 0.5rem;
+    }
+    
+    /* Styles pour les jours de circulation */
+    .jours-selection {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .jours-selection .form-check {
+        background: #f8fafc;
+        padding: 1rem;
+        border-radius: 8px;
+        border: 2px solid #e2e8f0;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+    }
+    
+    .jours-selection .form-check:hover {
+        border-color: #f59e0b;
+        background: #fffbeb;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(245, 158, 11, 0.1);
+    }
+    
+    .jours-selection .form-check-input {
+        width: 1.25rem;
+        height: 1.25rem;
+        margin-right: 0.75rem;
+        cursor: pointer;
+        border: 2px solid #cbd5e1;
+    }
+    
+    .jours-selection .form-check-input:checked {
+        background-color: #f59e0b;
+        border-color: #f59e0b;
+    }
+    
+    .jours-selection .form-check-input:checked ~ .form-check-label {
+        color: #f59e0b;
+        font-weight: 700;
+    }
+    
+    .jours-selection .form-check-label {
+        color: #475569;
+        font-weight: 500;
+        cursor: pointer;
+        user-select: none;
+        margin-bottom: 0;
+    }
+    
+    /* Styles des formulaires */
+    .form-label {
+        font-weight: 600;
+        color: #475569;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+    
+    .form-control, .form-select {
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0.625rem 0.875rem;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #f59e0b;
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        outline: none;
+    }
+    
+    .form-control:hover, .form-select:hover {
+        border-color: #cbd5e1;
+    }
+    
+    /* Styles des alertes */
+    .alert {
+        border-radius: 8px;
+        border: none;
+        padding: 1rem 1.25rem;
+    }
+    
+    .alert i {
+        margin-right: 0.5rem;
+    }
+    
+    .alert-success {
+        background: #ecfdf5;
+        color: #065f46;
+        border-left: 4px solid #10b981;
+    }
+    
+    .alert-info {
+        background: #eff6ff;
+        color: #1e40af;
+        border-left: 4px solid #3b82f6;
+    }
+    
+    .alert-secondary {
+        background: #f8fafc;
+        color: #475569;
+        border-left: 4px solid #94a3b8;
+    }
+    
+    .badge {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        border-radius: 6px;
+    }
+    
+    .badge.bg-success {
+        background: #10b981 !important;
+    }
+    
+    /* Boutons d'action */
+    .form-actions {
+        background: #f8fafc;
+        padding: 1.5rem;
+        margin: 1.5rem -1.5rem -1.5rem;
+        border-radius: 0 0 12px 12px;
+    }
+    
+    .btn {
+        padding: 0.625rem 1.25rem;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.2s;
+    }
+    
+    .btn-warning {
+        background: #f59e0b;
+        border: none;
+    }
+    
+    .btn-warning:hover {
+        background: #d97706;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(245, 158, 11, 0.3);
+    }
+    
+    .btn-outline-primary {
+        border: 2px solid #3b82f6;
+        color: #3b82f6;
+        background: transparent;
+    }
+    
+    .btn-outline-primary:hover {
+        background: #3b82f6;
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+    }
+    
+    .btn-info {
+        background: #0ea5e9;
+        border: none;
+    }
+    
+    .btn-info:hover {
+        background: #0284c7;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(14, 165, 233, 0.3);
+    }
+    
+    .btn-secondary {
+        background: #64748b;
+        border: none;
+    }
+    
+    .btn-secondary:hover {
+        background: #475569;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(100, 116, 139, 0.3);
+    }
+    
+    /* Card */
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .jours-selection {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .d-flex.gap-2 {
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .d-flex.gap-2 .btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}

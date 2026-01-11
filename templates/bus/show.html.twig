@@ -13,10 +13,10 @@
                     Détails du Bus
                 </h1>
                 <div>
-                    <a href="{{ path('app_admin_bus_edit', {'id': bus.id}) }}" class="btn btn-warning">
+                    <a href="{{ path('app_bus_edit', {'id': bus.id}) }}" class="btn btn-warning">
                         <i class="bi bi-pencil me-2"></i>Modifier
                     </a>
-                    <a href="{{ path('app_admin_bus_index') }}" class="btn btn-secondary">
+                    <a href="{{ path('app_bus_index') }}" class="btn btn-secondary">
                         <i class="bi bi-arrow-left me-2"></i>Retour
                     </a>
                 </div>
@@ -44,73 +44,42 @@
                             <h5>
                                 {% if bus.type == 'VIP' %}
                                     <span class="badge bg-warning text-dark fs-6">{{ bus.type }}</span>
+                                {% elseif bus.type == 'Premium' %}
+                                    <span class="badge bg-success fs-6">{{ bus.type }}</span>
+                                {% elseif bus.type == 'Confort' %}
+                                    <span class="badge bg-info fs-6">{{ bus.type }}</span>
                                 {% else %}
                                     <span class="badge bg-secondary fs-6">{{ bus.type }}</span>
                                 {% endif %}
                             </h5>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="text-muted">Trajets Assignés</label>
+                            <label class="text-muted">Administrateur</label>
                             <h5>
-                                <span class="badge bg-primary fs-6">{{ bus.trajets|length }} trajets</span>
+                                <span class="badge bg-purple fs-6">
+                                    <i class="bi bi-person-badge me-1"></i>
+                                    {{ bus.admin ? bus.admin.prenom ~ ' ' ~ bus.admin.nom : 'Non assigné' }}
+                                </span>
                             </h5>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Liste des trajets -->
-            {% if bus.trajets|length > 0 %}
-                <div class="card shadow-sm">
-                    <div class="card-header bg-light">
-                        <h5 class="mb-0">
-                            <i class="bi bi-pin-map me-2"></i>
-                            Trajets Assignés
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="list-group">
-                            {% for trajet in bus.trajets %}
-                                <div class="list-group-item">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="mb-1">
-                                                <i class="bi bi-geo-alt-fill text-success me-1"></i>
-                                                {{ trajet.depart }} 
-                                                <i class="bi bi-arrow-right mx-2"></i>
-                                                <i class="bi bi-geo-alt-fill text-danger me-1"></i>
-                                                {{ trajet.arrivee }}
-                                            </h6>
-                                            <small class="text-muted">
-                                                <i class="bi bi-calendar3 me-1"></i>
-                                                {{ trajet.date|date('d/m/Y') }} à {{ trajet.date|date('H:i') }}
-                                            </small>
-                                        </div>
-                                        <span class="badge bg-info">{{ trajet.distance }} km</span>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            {% else %}
-                <div class="alert alert-info">
-                    <i class="bi bi-info-circle me-2"></i>
-                    Ce bus n'est actuellement assigné à aucun trajet.
-                </div>
-            {% endif %}
+            {# 👇 SECTION TRAJETS SUPPRIMÉE CAR getTrajets() N'EXISTE PAS ENCORE #}
 
             <!-- Actions -->
             <div class="card mt-4 border-danger">
                 <div class="card-header bg-danger text-white">
-                    <h5 class="mb-0">Zone de Danger</h5>
+                    <h5 class="mb-0">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Zone de Danger
+                    </h5>
                 </div>
                 <div class="card-body">
                     <p class="mb-3">
+                        <i class="bi bi-info-circle me-2"></i>
                         Une fois supprimé, ce bus ne pourra plus être récupéré.
-                        {% if bus.trajets|length > 0 %}
-                            <strong class="text-danger">Attention : Ce bus est assigné à {{ bus.trajets|length }} trajet(s).</strong>
-                        {% endif %}
                     </p>
                     <button type="button" 
                             class="btn btn-danger" 
@@ -124,27 +93,29 @@
     </div>
 </div>
 
-<!-- Modal de confirmation -->
+<!-- Modal de confirmation de suppression -->
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">Confirmer la suppression</h5>
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    Confirmer la suppression
+                </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p>Êtes-vous absolument sûr de vouloir supprimer le bus <strong>{{ bus.numero }}</strong> ?</p>
-                {% if bus.trajets|length > 0 %}
-                    <div class="alert alert-warning">
-                        <i class="bi bi-exclamation-triangle me-2"></i>
-                        Ce bus est assigné à <strong>{{ bus.trajets|length }}</strong> trajet(s). 
-                        La suppression sera impossible tant qu'il est utilisé.
-                    </div>
-                {% endif %}
+                <p>Êtes-vous absolument sûr de vouloir supprimer le bus <strong class="text-danger">{{ bus.numero }}</strong> ?</p>
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-circle me-2"></i>
+                    <strong>Cette action est irréversible !</strong>
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <form method="post" action="{{ path('app_admin_bus_delete', {'id': bus.id}) }}" style="display: inline;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-2"></i>Annuler
+                </button>
+                <form method="post" action="{{ path('app_bus_delete', {'id': bus.id}) }}" style="display: inline;">
                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ bus.id) }}">
                     <button type="submit" class="btn btn-danger">
                         <i class="bi bi-trash me-2"></i>Supprimer Définitivement
@@ -154,4 +125,76 @@
         </div>
     </div>
 </div>
+
+{# 🎨 POPUPS SWEETALERT2 POUR LES MESSAGES #}
+{% if app.flashes('error') %}
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Erreur',
+            html: '<strong style="font-size: 1.1em;">{{ app.flashes('error')[0] }}</strong>',
+            showConfirmButton: true,
+            confirmButtonText: '<i class="bi bi-check-circle me-2"></i>Compris',
+            confirmButtonColor: '#dc3545',
+            background: '#fff',
+            backdrop: 'rgba(220, 53, 69, 0.2)',
+            customClass: {
+                popup: 'animated-popup',
+                title: 'swal-title-custom',
+                confirmButton: 'swal-button-custom'
+            }
+        });
+    </script>
+{% endif %}
+
+{% if app.flashes('success') %}
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Succès !',
+            html: '<strong style="font-size: 1.1em;">{{ app.flashes('success')[0] }}</strong>',
+            showConfirmButton: false,
+            timer: 2500,
+            timerProgressBar: true,
+            background: '#fff',
+            backdrop: 'rgba(34, 197, 94, 0.2)',
+            customClass: {
+                popup: 'animated-popup',
+                title: 'swal-title-custom'
+            }
+        });
+    </script>
+{% endif %}
+
+<style>
+    .bg-purple {
+        background-color: #9333ea !important;
+    }
+    
+    /* 🎨 STYLES SWEETALERT2 */
+    .animated-popup {
+        border-radius: 20px !important;
+        padding: 2em !important;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+    }
+    
+    .swal-title-custom {
+        font-weight: 700 !important;
+        font-size: 1.8em !important;
+        color: #1f2937 !important;
+    }
+    
+    .swal-button-custom {
+        padding: 12px 30px !important;
+        font-weight: 600 !important;
+        border-radius: 10px !important;
+        font-size: 1em !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .swal-button-custom:hover {
+        transform: scale(1.05) !important;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
+    }
+</style>
 {% endblock %}

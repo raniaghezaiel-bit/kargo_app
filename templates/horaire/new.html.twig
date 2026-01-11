@@ -1,0 +1,367 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un Horaire - Kar&Go Admin{% endblock %}
+
+{% block body %}
+<div class="admin-container">
+    <div class="container py-4">
+        
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{{ path('admin_horaire_index') }}">
+                        <i class="fas fa-clock"></i> Horaires
+                    </a>
+                </li>
+                <li class="breadcrumb-item active">Nouvel horaire</li>
+            </ol>
+        </nav>
+
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h3 mb-2">
+                    <i class="fas fa-plus-circle text-primary"></i> Ajouter un nouvel horaire
+                </h1>
+                <p class="text-muted mb-0">Créez un nouveau trajet avec ses horaires</p>
+            </div>
+            <a href="{{ path('admin_horaire_index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Retour à la liste
+            </a>
+        </div>
+
+        <!-- Formulaire -->
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                
+                <!-- Section 1 : Informations du trajet -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-route"></i> Informations du trajet
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                {{ form_row(form.villeDepart) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_row(form.villeArrivee) }}
+                            </div>
+                            <div class="col-md-12">
+                                {{ form_row(form.distance) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2 : Horaires -->
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-clock"></i> Horaires de départ et d'arrivée
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                {{ form_row(form.heureDepart) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_row(form.heureArrivee) }}
+                            </div>
+                        </div>
+                        <div class="alert alert-info mt-3 mb-0">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Note :</strong> La durée du trajet sera calculée automatiquement.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3 : Jours de circulation -->
+                <div class="card mb-4">
+                    <div class="card-header bg-warning text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-calendar-week"></i> Jours de circulation
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-3">
+                            <i class="fas fa-info-circle"></i> Sélectionnez les jours où ce trajet est disponible
+                        </p>
+                        
+                        {{ form_label(form.joursActifs) }}
+                        {{ form_errors(form.joursActifs) }}
+                        
+                        <div class="jours-grid">
+                            {% for child in form.joursActifs %}
+                                <div class="jour-item">
+                                    <label class="jour-checkbox">
+                                        {{ form_widget(child) }}
+                                        <span class="jour-label">{{ child.vars.label }}</span>
+                                        <span class="checkmark">
+                                            <i class="fas fa-check"></i>
+                                        </span>
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4 : Prix et configuration -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-cog"></i> Prix et configuration
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                {{ form_row(form.prix) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_row(form.bus) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_row(form.statut) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aide -->
+                <div class="alert alert-light border">
+                    <h6 class="alert-heading">
+                        <i class="fas fa-lightbulb text-warning"></i> Conseils importants
+                    </h6>
+                    <ul class="mb-0">
+                        <li>La ville de départ et d'arrivée doivent être différentes</li>
+                        <li>L'heure d'arrivée doit être postérieure à l'heure de départ</li>
+                        <li>Sélectionnez au moins un jour de circulation</li>
+                        <li>Le bus est optionnel, vous pourrez l'assigner plus tard</li>
+                    </ul>
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="card">
+                    <div class="card-body d-flex gap-2 justify-content-end">
+                        <a href="{{ path('admin_horaire_index') }}" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-times"></i> Annuler
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-save"></i> Enregistrer l'horaire
+                        </button>
+                    </div>
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .admin-container {
+        background: #f8fafc;
+        min-height: 100vh;
+        padding-top: 80px;
+    }
+    
+    .breadcrumb {
+        background: white;
+        padding: 0.75rem 1.25rem;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    
+    .breadcrumb-item a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+    
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+    
+    .card-header {
+        padding: 1rem 1.5rem;
+        border-bottom: none;
+    }
+    
+    .card-header h5 {
+        margin: 0;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: var(--gray-700);
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-control, .form-select {
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0.625rem 0.875rem;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(115, 236, 139, 0.1);
+    }
+    
+    /* Style amélioré pour les jours de la semaine */
+    .jours-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .jour-item {
+        position: relative;
+    }
+    
+    .jour-checkbox {
+        position: relative;
+        display: flex;
+        align-items: center;
+        padding: 1rem 1.25rem;
+        background: #ffffff;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin: 0;
+        min-height: 60px;
+    }
+    
+    .jour-checkbox:hover {
+        border-color: #fbbf24;
+        background: #fffbeb;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(251, 191, 36, 0.25);
+    }
+    
+    .jour-checkbox input[type="checkbox"] {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+    }
+    
+    .jour-label {
+        font-weight: 600;
+        font-size: 1rem;
+        color: #475569;
+        padding-left: 2.5rem;
+        user-select: none;
+        width: 100%;
+    }
+    
+    .checkmark {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 24px;
+        width: 24px;
+        background-color: #ffffff;
+        border: 2px solid #cbd5e1;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    
+    .checkmark i {
+        color: white;
+        font-size: 14px;
+        opacity: 0;
+        transform: scale(0);
+        transition: all 0.2s ease;
+    }
+    
+    /* Quand la checkbox est cochée */
+    .jour-checkbox input[type="checkbox"]:checked ~ .checkmark {
+        background-color: #fbbf24;
+        border-color: #fbbf24;
+    }
+    
+    .jour-checkbox input[type="checkbox"]:checked ~ .checkmark i {
+        opacity: 1;
+        transform: scale(1);
+    }
+    
+    .jour-checkbox input[type="checkbox"]:checked ~ .jour-label {
+        color: #92400e;
+        font-weight: 700;
+    }
+    
+    .jour-checkbox input[type="checkbox"]:checked {
+        background-color: #fbbf24;
+    }
+    
+    /* État actif */
+    .jour-checkbox:has(input[type="checkbox"]:checked) {
+        background: #fffbeb;
+        border-color: #fbbf24;
+        box-shadow: 0 2px 8px rgba(251, 191, 36, 0.2);
+    }
+    
+    /* Focus state pour accessibilité */
+    .jour-checkbox:has(input[type="checkbox"]:focus) {
+        outline: 2px solid #fbbf24;
+        outline-offset: 2px;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .jours-grid {
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.75rem;
+        }
+        
+        .jour-checkbox {
+            padding: 0.875rem 1rem;
+            min-height: 50px;
+        }
+        
+        .jour-label {
+            font-size: 0.9rem;
+            padding-left: 2rem;
+        }
+        
+        .checkmark {
+            height: 20px;
+            width: 20px;
+            left: 0.75rem;
+        }
+        
+        .checkmark i {
+            font-size: 12px;
+        }
+    }
+</style>
+{% endblock %}

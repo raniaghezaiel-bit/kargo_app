@@ -20,7 +20,10 @@ class BusType extends AbstractType
                 'label' => 'Numéro de Matricule',
                 'attr' => [
                     'class' => 'form-control',
-                    'placeholder' => 'Ex: TUN-1234-AB'
+                    'placeholder' => '123-TUN-4567',
+                    'maxlength' => '12',
+                    'pattern' => '[0-9]{3}-TUN-[0-9]{4}',
+                    'title' => 'Format : XXX-TUN-XXXX (exemple : 123-TUN-4567)'
                 ]
             ])
             ->add('capacite', IntegerType::class, [

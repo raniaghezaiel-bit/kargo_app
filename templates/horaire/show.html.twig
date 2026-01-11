@@ -1,0 +1,418 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ horaire.trajet }} - Kar&Go Admin{% endblock %}
+
+{% block body %}
+<div class="admin-container">
+    <div class="container py-4">
+        
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{{ path('admin_horaire_index') }}">
+                        <i class="fas fa-clock"></i> Horaires
+                    </a>
+                </li>
+                <li class="breadcrumb-item active">{{ horaire.trajet }}</li>
+            </ol>
+        </nav>
+
+        <!-- Header avec actions -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h3 mb-1">{{ horaire.trajet }}</h1>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-{{ horaire.statutBadge }} fs-6">
+                        {% if horaire.statut == 'actif' %}
+                            <i class="fas fa-check-circle"></i> Actif
+                        {% else %}
+                            <i class="fas fa-pause-circle"></i> Inactif
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+            
+            <div class="d-flex gap-2">
+                <a href="{{ path('admin_horaire_edit', {'id': horaire.id}) }}" class="btn btn-warning text-white">
+                    <i class="fas fa-edit"></i> Modifier
+                </a>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">
+                    <i class="fas fa-trash"></i> Supprimer
+                </button>
+                <a href="{{ path('admin_horaire_index') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Colonne principale -->
+            <div class="col-lg-8 mb-4">
+                
+                <!-- Informations du trajet -->
+                <div class="card mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-route text-primary"></i> Informations du trajet
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="info-item">
+                                    <label class="info-label">
+                                        <i class="fas fa-map-marker-alt text-success"></i> Ville de départ
+                                    </label>
+                                    <div class="info-value">{{ horaire.villeDepart }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-item">
+                                    <label class="info-label">
+                                        <i class="fas fa-map-marker-alt text-danger"></i> Ville d'arrivée
+                                    </label>
+                                    <div class="info-value">{{ horaire.villeArrivee }}</div>
+                                </div>
+                            </div>
+                            {% if horaire.distance %}
+                            <div class="col-md-12">
+                                <div class="info-item">
+                                    <label class="info-label">
+                                        <i class="fas fa-road"></i> Distance
+                                    </label>
+                                    <div class="info-value">{{ horaire.distance }} km</div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Horaires -->
+                <div class="card mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-clock text-info"></i> Horaires
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="info-item">
+                                    <label class="info-label">
+                                        <i class="fas fa-play"></i> Heure de départ
+                                    </label>
+                                    <div class="info-value">
+                                        <span class="badge bg-success fs-5">{{ horaire.heureDepartFormatee }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="info-item">
+                                    <label class="info-label">
+                                        <i class="fas fa-stop"></i> Heure d'arrivée
+                                    </label>
+                                    <div class="info-value">
+                                        <span class="badge bg-danger fs-5">{{ horaire.heureArriveeFormatee }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="info-item">
+                                    <label class="info-label">
+                                        <i class="fas fa-hourglass-half"></i> Durée
+                                    </label>
+                                    <div class="info-value">
+                                        <span class="badge bg-primary fs-5">{{ horaire.duree }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Jours de circulation -->
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-calendar-week text-warning"></i> Jours de circulation
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="jours-display">
+                            {% set joursTraduction = {
+                                'lundi': 'Lundi',
+                                'mardi': 'Mardi',
+                                'mercredi': 'Mercredi',
+                                'jeudi': 'Jeudi',
+                                'vendredi': 'Vendredi',
+                                'samedi': 'Samedi',
+                                'dimanche': 'Dimanche'
+                            } %}
+                            
+                            {% for jour, label in joursTraduction %}
+                                <div class="jour-badge {% if horaire.isActifLe(jour) %}actif{% endif %}">
+                                    {% if horaire.isActifLe(jour) %}
+                                        <i class="fas fa-check-circle"></i>
+                                    {% else %}
+                                        <i class="fas fa-times-circle"></i>
+                                    {% endif %}
+                                    {{ label }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Colonne latérale -->
+            <div class="col-lg-4">
+                
+                <!-- Prix et bus -->
+                <div class="card mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-info-circle"></i> Informations complémentaires
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-item-small mb-3">
+                            <label>
+                                <i class="fas fa-money-bill-wave text-success"></i> Prix
+                            </label>
+                            <div class="fs-4 fw-bold text-primary">{{ horaire.prixFormate }}</div>
+                        </div>
+                        
+                        <div class="info-item-small mb-0">
+                            <label>
+                                <i class="fas fa-bus text-info"></i> Bus assigné
+                            </label>
+                            <div>
+                                {% if horaire.bus %}
+                                    <span class="badge bg-info fs-6">
+                                        {{ horaire.bus.numero }} ({{ horaire.bus.capacite }} places)
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted">Aucun bus assigné</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions rapides -->
+                <div class="card mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-bolt"></i> Actions rapides
+                        </h5>
+                    </div>
+                    <div class="card-body p-2">
+                        <div class="list-group list-group-flush">
+                            {% if horaire.statut != 'actif' %}
+                                <form method="POST" action="{{ path('admin_horaire_change_status', {'id': horaire.id, 'statut': 'actif'}) }}" class="list-group-item list-group-item-action p-0">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('status' ~ horaire.id) }}">
+                                    <button type="submit" class="btn btn-link text-start text-decoration-none w-100 p-3">
+                                        <i class="fas fa-check-circle text-success"></i> Marquer comme actif
+                                    </button>
+                                </form>
+                            {% endif %}
+                            
+                            {% if horaire.statut != 'inactif' %}
+                                <form method="POST" action="{{ path('admin_horaire_change_status', {'id': horaire.id, 'statut': 'inactif'}) }}" class="list-group-item list-group-item-action p-0">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('status' ~ horaire.id) }}">
+                                    <button type="submit" class="btn btn-link text-start text-decoration-none w-100 p-3">
+                                        <i class="fas fa-pause-circle text-secondary"></i> Marquer comme inactif
+                                    </button>
+                                </form>
+                            {% endif %}
+                            
+                            <a href="{{ path('admin_horaire_edit', {'id': horaire.id}) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-edit text-warning"></i> Modifier l'horaire
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informations système -->
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-database"></i> Informations système
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-item-small">
+                            <label>Créé le</label>
+                            <div>{{ horaire.dateCreation|date('d/m/Y à H:i') }}</div>
+                        </div>
+                        {% if horaire.dateModification %}
+                        <div class="info-item-small mb-0">
+                            <label>Modifié le</label>
+                            <div>{{ horaire.dateModification|date('d/m/Y à H:i') }}</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal de confirmation de suppression -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle text-danger"></i> 
+                    Confirmer la suppression
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer l'horaire <strong>{{ horaire.trajet }}</strong> ?</p>
+                <p class="text-danger mb-0">
+                    <i class="fas fa-exclamation-circle"></i> 
+                    Cette action est irréversible !
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Annuler
+                </button>
+                <form method="POST" action="{{ path('admin_horaire_delete', {'id': horaire.id}) }}" style="display: inline;">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ horaire.id) }}">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Supprimer définitivement
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    function confirmDelete() {
+        const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        modal.show();
+    }
+</script>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .admin-container {
+        background: #f8fafc;
+        min-height: 100vh;
+        padding-top: 80px;
+    }
+    
+    .breadcrumb {
+        background: white;
+        padding: 0.75rem 1.25rem;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    
+    .breadcrumb-item a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+    
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .card-header h5 {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .info-item {
+        padding: 0.75rem;
+        background: #f8fafc;
+        border-radius: 8px;
+    }
+    
+    .info-label {
+        font-size: 0.875rem;
+        color: var(--gray-600);
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        display: block;
+    }
+    
+    .info-value {
+        font-size: 1rem;
+        color: var(--gray-900);
+        font-weight: 500;
+    }
+    
+    .info-item-small {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .info-item-small label {
+        font-size: 0.875rem;
+        color: var(--gray-600);
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+    
+    .info-item-small div {
+        font-size: 0.9375rem;
+        color: var(--gray-800);
+    }
+    
+    .jours-display {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 0.75rem;
+    }
+    
+    .jour-badge {
+        padding: 0.75rem 1rem;
+        background: #f8fafc;
+        border-radius: 8px;
+        border: 2px solid #e2e8f0;
+        text-align: center;
+        font-weight: 600;
+        color: #94a3b8;
+        transition: all 0.3s;
+    }
+    
+    .jour-badge.actif {
+        background: #f0fdf4;
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+    
+    .jour-badge.actif i {
+        color: var(--primary);
+    }
+    
+    .list-group-item {
+        border: none;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .list-group-item:last-child {
+        border-bottom: none;
+    }
+</style>
+{% endblock %}

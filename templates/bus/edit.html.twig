@@ -6,6 +6,23 @@
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
+            {# 👇 MESSAGES FLASH AJOUTÉS ICI #}
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle me-2"></i>
+                    <strong>Succès !</strong> {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <strong>Erreur !</strong> {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+
             <div class="card shadow-sm">
                 <div class="card-header bg-warning text-dark">
                     <h2 class="mb-0">
@@ -21,46 +38,59 @@
                         {{ form_widget(form.numero) }}
                         {{ form_errors(form.numero) }}
                     </div>
-
+                    
                     <div class="mb-3">
                         {{ form_label(form.capacite, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
                         {{ form_widget(form.capacite) }}
                         {{ form_errors(form.capacite) }}
                     </div>
-
+                    
                     <div class="mb-3">
                         {{ form_label(form.type, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
                         {{ form_widget(form.type) }}
                         {{ form_errors(form.type) }}
                     </div>
-
+                    
                     <div class="d-flex justify-content-between mt-4">
-                        <a href="{{ path('app_admin_bus_index') }}" class="btn btn-secondary">
+                        <a href="{{ path('app_bus_index') }}" class="btn btn-secondary">
                             <i class="bi bi-arrow-left me-2"></i>Retour
                         </a>
                         {{ form_widget(form.submit) }}
                     </div>
-
+                    
                     {{ form_end(form) }}
                 </div>
             </div>
-
-            <!-- Informations sur les trajets associés -->
-            {% if bus.trajets|length > 0 %}
-                <div class="card mt-3 border-warning">
-                    <div class="card-header bg-warning text-dark">
-                        <i class="bi bi-exclamation-triangle me-2"></i>
-                        Trajets associés à ce bus
-                    </div>
-                    <div class="card-body">
-                        <p>Ce bus est actuellement assigné à <strong>{{ bus.trajets|length }}</strong> trajet(s).</p>
-                        <p class="text-muted mb-0">
-                            <small>Les modifications apporteront des changements aux trajets existants.</small>
-                        </p>
-                    </div>
-                </div>
-            {% endif %}
+            
+           
         </div>
     </div>
 </div>
+
+<style>
+    .form-control:focus {
+        border-color: #7c3aed;
+        box-shadow: 0 0 0 0.2rem rgba(124, 58, 237, 0.25);
+    }
+    
+    .form-label.fw-bold {
+        color: #374151;
+    }
+    
+    /* Style pour les alertes */
+    .alert {
+        border-radius: 0.5rem;
+        border: none;
+    }
+    
+    .alert-success {
+        background-color: #d1fae5;
+        color: #065f46;
+    }
+    
+    .alert-danger {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+</style>
 {% endblock %}
