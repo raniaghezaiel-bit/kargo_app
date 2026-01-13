@@ -3,69 +3,19 @@
 {% block title %}Résultats de recherche - Kar&Go{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
+<div class="container mt-5" style="padding-top: 80px;">
     <h1 class="mb-4">
         <i class="bi bi-search"></i> Résultats de recherche
     </h1>
 
-    <div class="alert alert-info">
-        <strong>Recherche :</strong> {{ depart }} → {{ destination }}
-        {% if date %} | Date : {{ date }}{% endif %}
+    {# DEBUG: Afficher toutes les variables disponibles #}
+    <div class="alert alert-warning">
+        <strong>DEBUG - Variables disponibles :</strong>
+        <pre>{{ dump() }}</pre>
     </div>
 
-    {% if trajets is empty %}
-        <div class="card text-center py-5">
-            <div class="card-body">
-                <i class="bi bi-exclamation-circle" style="font-size: 4rem; color: #fbbf24;"></i>
-                <h3 class="mt-3">Aucun trajet trouvé</h3>
-                <p class="text-muted">Essayez avec d'autres critères de recherche</p>
-                <a href="{{ path('app_home') }}" class="btn btn-primary mt-3">
-                    <i class="bi bi-arrow-left"></i> Nouvelle recherche
-                </a>
-            </div>
-        </div>
-    {% else %}
-        <div class="row">
-            {% for trajet in trajets %}
-                <div class="col-md-6 mb-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                {{ trajet.depart }} <i class="bi bi-arrow-right text-primary"></i> {{ trajet.destination }}
-                            </h5>
-                            <p class="text-muted mb-3">
-                                <i class="bi bi-road"></i> {{ trajet.distance }} km
-                            </p>
-                            
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h3 class="text-primary mb-0">{{ trajet.prix }} DT</h3>
-                                    <small class="text-muted">par personne</small>
-                                </div>
-                                <a href="{{ path('app_trajet_horaires', {'id': trajet.id}) }}" 
-                                   class="btn btn-primary">
-                                    Voir les horaires
-                                </a>
-                            </div>
-
-                            {% if trajet.bus %}
-                                <div class="mt-3">
-                                    <span class="badge bg-info">
-                                        <i class="bi bi-bus-front"></i> Bus {{ trajet.bus.numero }}
-                                    </span>
-                                    <span class="badge bg-secondary">
-                                        {{ trajet.bus.capacite }} places
-                                    </span>
-                                    <span class="badge bg-success">
-                                        {{ trajet.bus.type }}
-                                    </span>
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
+    <div class="alert alert-info">
+        <strong>Recherche en cours...</strong>
+    </div>
 </div>
 {% endblock %}

@@ -1,0 +1,308 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails Utilisateur - {{ user.nom }} {{ user.prenom }} - Kar&Go{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4 py-4" style="padding-top: 100px;">
+    
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-2">
+                <i class="fas fa-user-circle text-primary"></i>
+                Détails de l'utilisateur
+            </h1>
+            <p class="text-muted">Informations complètes et historique</p>
+        </div>
+        <a href="{{ path('app_admin_users') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Retour à la liste
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <!-- Colonne gauche - Informations principales -->
+        <div class="col-lg-4">
+            <!-- Carte profil -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body text-center">
+                    <div class="avatar-xl bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                        <span style="font-size: 3rem; font-weight: bold;">
+                            {{ user.prenom|first }}{{ user.nom|first }}
+                        </span>
+                    </div>
+                    
+                    <h4 class="mb-1">{{ user.nom }} {{ user.prenom }}</h4>
+                    
+                    {% if 'ROLE_ADMIN' in user.roles %}
+                        <span class="badge bg-danger mb-3">
+                            <i class="fas fa-user-shield"></i> Administrateur
+                        </span>
+                    {% else %}
+                        <span class="badge bg-info mb-3">
+                            <i class="fas fa-user"></i> Passager
+                        </span>
+                    {% endif %}
+                    
+                    {% if user.id == app.user.id %}
+                        <span class="badge bg-secondary mb-3">C'est vous</span>
+                    {% endif %}
+
+                    <hr class="my-3">
+
+                    <!-- Actions -->
+                    {% if user.id != app.user.id %}
+                        <div class="d-grid gap-2">
+                            <form method="post" 
+                                  action="{{ path('app_admin_user_toggle_role', {'id': user.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('toggle-role' ~ user.id) }}">
+                                <button type="submit" class="btn btn-warning w-100">
+                                    <i class="fas fa-exchange-alt"></i>
+                                    {% if 'ROLE_ADMIN' in user.roles %}
+                                        Rétrograder en passager
+                                    {% else %}
+                                        Promouvoir en admin
+                                    {% endif %}
+                                </button>
+                            </form>
+                            
+                            <form method="post" 
+                                  action="{{ path('app_admin_user_delete', {'id': user.id}) }}"
+                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                                <button type="submit" class="btn btn-outline-danger w-100">
+                                    <i class="fas fa-trash"></i> Supprimer le compte
+                                </button>
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Carte informations de contact -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-address-card text-primary"></i>
+                        Informations de contact
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <small class="text-muted d-block mb-1">Email</small>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-envelope text-primary me-2"></i>
+                            <a href="mailto:{{ user.email }}" class="text-decoration-none">
+                                {{ user.email }}
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <small class="text-muted d-block mb-1">Téléphone</small>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-phone text-primary me-2"></i>
+                            {% if user.telephone %}
+                                <a href="tel:{{ user.telephone }}" class="text-decoration-none">
+                                    {{ user.telephone }}
+                                </a>
+                            {% else %}
+                                <span class="text-muted">Non renseigné</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <small class="text-muted d-block mb-1">Adresse</small>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                            {% if user.adresse %}
+                                {{ user.adresse }}
+                            {% else %}
+                                <span class="text-muted">Non renseignée</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Colonne droite - Historique et statistiques -->
+        <div class="col-lg-8">
+            {% if 'ROLE_PASSAGER' in user.roles %}
+                <!-- Statistiques réservations -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm bg-primary text-white">
+                            <div class="card-body">
+                                <h6 class="text-white-50 mb-1">Total Réservations</h6>
+                                <h2 class="mb-0">{{ reservations|length }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm bg-success text-white">
+                            <div class="card-body">
+                                <h6 class="text-white-50 mb-1">Confirmées</h6>
+                                <h2 class="mb-0">
+                                    {{ reservations|filter(r => r.statut == 'confirmee')|length }}
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm bg-danger text-white">
+                            <div class="card-body">
+                                <h6 class="text-white-50 mb-1">Annulées</h6>
+                                <h2 class="mb-0">
+                                    {{ reservations|filter(r => r.statut == 'annulee')|length }}
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Historique des réservations -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-history text-primary"></i>
+                            Historique des réservations
+                        </h5>
+                    </div>
+                    <div class="card-body p-0">
+                        {% if reservations is not empty %}
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>N° Réservation</th>
+                                            <th>Trajet</th>
+                                            <th>Date & Heure</th>
+                                            <th>Places</th>
+                                            <th>Montant</th>
+                                            <th>Statut</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for reservation in reservations %}
+                                            <tr>
+                                                <td>
+                                                    <strong class="text-primary">
+                                                        {{ reservation.numeroReservation }}
+                                                    </strong>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <i class="fas fa-map-marker-alt text-success"></i>
+                                                        <strong>{{ reservation.horaire.trajet.villeDepart }}</strong>
+                                                    </div>
+                                                    <div class="text-muted small">
+                                                        <i class="fas fa-arrow-down"></i>
+                                                    </div>
+                                                    <div>
+                                                        <i class="fas fa-map-marker-alt text-danger"></i>
+                                                        <strong>{{ reservation.horaire.trajet.villeArrivee }}</strong>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <i class="fas fa-calendar text-muted"></i>
+                                                        {{ reservation.dateReservation|date('d/m/Y') }}
+                                                    </div>
+                                                    <div class="text-muted small">
+                                                        <i class="fas fa-clock"></i>
+                                                        {{ reservation.dateReservation|date('H:i') }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-secondary">
+                                                        {{ reservation.nombrePlaces }} 
+                                                        {{ reservation.nombrePlaces > 1 ? 'places' : 'place' }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <strong class="text-success">
+                                                        {{ reservation.montant }} TND
+                                                    </strong>
+                                                </td>
+                                                <td>
+                                                    {% if reservation.statut == 'confirmee' %}
+                                                        <span class="badge bg-success">
+                                                            <i class="fas fa-check-circle"></i> Confirmée
+                                                        </span>
+                                                    {% elseif reservation.statut == 'annulee' %}
+                                                        <span class="badge bg-danger">
+                                                            <i class="fas fa-times-circle"></i> Annulée
+                                                        </span>
+                                                    {% else %}
+                                                        <span class="badge bg-warning">
+                                                            <i class="fas fa-clock"></i> {{ reservation.statut }}
+                                                        </span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">Aucune réservation pour cet utilisateur</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% else %}
+                <!-- Message pour les administrateurs -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-user-shield fa-4x text-primary mb-3"></i>
+                        <h4>Compte Administrateur</h4>
+                        <p class="text-muted">
+                            Les administrateurs n'effectuent pas de réservations.
+                            Ils gèrent la plateforme et supervisent les opérations.
+                        </p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .avatar-xl {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .card {
+        border-radius: 12px;
+    }
+    
+    .table thead th {
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .table tbody tr {
+        transition: all 0.2s;
+    }
+    
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .badge {
+        padding: 0.5rem 0.75rem;
+        font-weight: 500;
+    }
+</style>
+{% endblock %}

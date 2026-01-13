@@ -20,7 +20,7 @@ class ReservationController extends AbstractController
     public function index(ReservationRepository $reservationRepository): Response
     {
         $passager = $this->getUser();
-        $reservations = $reservationRepository->findByPassager($passager);
+        $reservations = $reservationRepository->findBy(['passager' => $passager], ['dateReservation' => 'DESC']);
 
         return $this->render('reservation/index.html.twig', [
             'reservations' => $reservations,

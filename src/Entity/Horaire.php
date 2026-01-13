@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\HoraireRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -22,6 +24,10 @@ class Horaire
     #[ORM\Column(length: 100)]
     #[Assert\NotBlank(message: "La ville d'arrivée est obligatoire")]
     private ?string $villeArrivee = null;
+
+    //#[ORM\Column(type: Types::DATE_MUTABLE)]
+    //#[Assert\NotBlank(message: "La date de départ est obligatoire")]
+    //private ?\DateTimeInterface $dateDepart = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
     #[Assert\NotBlank(message: "L'heure de départ est obligatoire")]
@@ -47,6 +53,9 @@ class Horaire
     #[Assert\Positive(message: "La distance doit être positive")]
     private ?int $distance = null;
 
+    //#[ORM\Column]
+    //private ?int $placesDisponibles = null;
+
     #[ORM\Column(length: 20)]
     #[Assert\Choice(
         choices: ['actif', 'inactif'],
@@ -61,12 +70,17 @@ class Horaire
     private ?\DateTimeInterface $dateModification = null;
 
     #[ORM\ManyToOne(inversedBy: 'horaires')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Bus $bus = null;
+
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'horaire')]
+    private Collection $reservations;
 
     public function __construct()
     {
         $this->dateCreation = new \DateTime();
         $this->statut = 'actif';
+        $this->reservations = new ArrayCollection();
     }
 
     // Getters et Setters
@@ -95,6 +109,17 @@ class Horaire
     public function setVilleArrivee(string $villeArrivee): static
     {
         $this->villeArrivee = $villeArrivee;
+        return $this;
+    }
+
+    public function getDateDepart(): ?\DateTimeInterface
+    {
+        return $this->dateDepart;
+    }
+
+    public function setDateDepart(\DateTimeInterface $dateDepart): static
+    {
+        $this->dateDepart = $dateDepart;
         return $this;
     }
 
@@ -166,6 +191,17 @@ class Horaire
         return $this;
     }
 
+    public function getPlacesDisponibles(): ?int
+    {
+        return $this->placesDisponibles;
+    }
+
+    public function setPlacesDisponibles(int $placesDisponibles): static
+    {
+        $this->placesDisponibles = $placesDisponibles;
+        return $this;
+    }
+
     public function getStatut(): ?string
     {
         return $this->statut;
@@ -210,6 +246,35 @@ class Horaire
         return $this;
     }
 
+    /**
+     * @return Collection<int, Reservation>
+     */
+    public function getReservations(): Collection
+    {
+        return $this->reservations;
+    }
+
+    public function addReservation(Reservation $reservation): static
+    {
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations->add($reservation);
+            $reservation->setHoraire($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReservation(Reservation $reservation): static
+    {
+        if ($this->reservations->removeElement($reservation)) {
+            if ($reservation->getHoraire() === $this) {
+                $reservation->setHoraire(null);
+            }
+        }
+
+        return $this;
+    }
+
     // Méthodes helper
 
     /**
@@ -234,9 +299,17 @@ class Horaire
     }
 
     /**
+     * Retourne un objet similaire à Trajet pour compatibilité
+     */
+    public function getTrajet(): self
+    {
+        return $this;
+    }
+
+    /**
      * Retourne le trajet formaté
      */
-    public function getTrajet(): string
+    public function getTrajetString(): string
     {
         return $this->villeDepart . ' → ' . $this->villeArrivee;
     }
@@ -314,6 +387,6 @@ class Horaire
 
     public function __toString(): string
     {
-        return $this->getTrajet() . ' - ' . $this->getHeureDepartFormatee();
+        return $this->getTrajetString() . ' - ' . $this->getHeureDepartFormatee();
     }
 }

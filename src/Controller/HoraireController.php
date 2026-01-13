@@ -19,45 +19,38 @@ class HoraireController extends AbstractController
     #[Route('/', name: 'admin_horaire_index', methods: ['GET'])]
     public function index(HoraireRepository $horaireRepository, Request $request): Response
     {
-        // Récupération des paramètres de recherche et filtres
-        $villeDepart = $request->query->get('ville_depart', '');
-        $villeArrivee = $request->query->get('ville_arrivee', '');
-        $statut = $request->query->get('statut', '');
-
-        // Création du QueryBuilder
-        $qb = $horaireRepository->createQueryBuilder('h');
-
-        // Filtre par ville de départ
-        if ($villeDepart) {
-            $qb->andWhere('h.villeDepart = :depart')
-               ->setParameter('depart', $villeDepart);
+        $villeDepart = $request->query->get('ville_depart');
+        $villeArrivee = $request->query->get('ville_arrivee');
+        $statut = $request->query->get('statut');
+        
+        $horaires = $horaireRepository->findAll();
+        
+        if ($villeDepart || $villeArrivee || $statut) {
+            $horaires = array_filter($horaires, function($h) use ($villeDepart, $villeArrivee, $statut) {
+                $match = true;
+                
+                if ($villeDepart && $h->getTrajet()->getVilleDepart() !== $villeDepart) {
+                    $match = false;
+                }
+                
+                if ($villeArrivee && $h->getTrajet()->getVilleArrivee() !== $villeArrivee) {
+                    $match = false;
+                }
+                
+                if ($statut && $h->getStatut() !== $statut) {
+                    $match = false;
+                }
+                
+                return $match;
+            });
         }
-
-        // Filtre par ville d'arrivée
-        if ($villeArrivee) {
-            $qb->andWhere('h.villeArrivee = :arrivee')
-               ->setParameter('arrivee', $villeArrivee);
-        }
-
-        // Filtre par statut
-        if ($statut) {
-            $qb->andWhere('h.statut = :statut')
-               ->setParameter('statut', $statut);
-        }
-
-        // Tri par ville de départ puis heure de départ
-        $qb->orderBy('h.villeDepart', 'ASC')
-           ->addOrderBy('h.heureDepart', 'ASC');
-
-        $horaires = $qb->getQuery()->getResult();
-
-        // Statistiques
+        
         $stats = [
-            'total' => $horaireRepository->count([]),
-            'actifs' => $horaireRepository->count(['statut' => 'actif']),
-            'inactifs' => $horaireRepository->count(['statut' => 'inactif']),
+            'total' => count($horaires),
+            'actifs' => count(array_filter($horaires, fn($h) => $h->getStatut() === 'actif')),
+            'inactifs' => count(array_filter($horaires, fn($h) => $h->getStatut() === 'inactif')),
         ];
-
+        
         return $this->render('horaire/index.html.twig', [
             'horaires' => $horaires,
             'stats' => $stats,
@@ -75,30 +68,14 @@ class HoraireController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Validation : ville de départ != ville d'arrivée
-            if ($horaire->getVilleDepart() === $horaire->getVilleArrivee()) {
-                $this->addFlash('error', 'La ville de départ et d\'arrivée doivent être différentes.');
-                return $this->render('horaire/new.html.twig', [
-                    'horaire' => $horaire,
-                    'form' => $form,
-                ]);
+            if ($horaire->getBus()) {
+                $horaire->setPlacesDisponibles($horaire->getBus()->getCapacite());
             }
 
-            // Validation : heure d'arrivée > heure de départ
-            if ($horaire->getHeureArrivee() <= $horaire->getHeureDepart()) {
-                $this->addFlash('error', 'L\'heure d\'arrivée doit être postérieure à l\'heure de départ.');
-                return $this->render('horaire/new.html.twig', [
-                    'horaire' => $horaire,
-                    'form' => $form,
-                ]);
-            }
-
-            $horaire->setDateCreation(new \DateTime());
-            
             $entityManager->persist($horaire);
             $entityManager->flush();
 
-            $this->addFlash('success', 'L\'horaire ' . $horaire->getTrajet() . ' a été ajouté avec succès !');
+            $this->addFlash('success', 'Horaire ajouté avec succès !');
 
             return $this->redirectToRoute('admin_horaire_index');
         }
@@ -124,29 +101,9 @@ class HoraireController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Validation : ville de départ != ville d'arrivée
-            if ($horaire->getVilleDepart() === $horaire->getVilleArrivee()) {
-                $this->addFlash('error', 'La ville de départ et d\'arrivée doivent être différentes.');
-                return $this->render('horaire/edit.html.twig', [
-                    'horaire' => $horaire,
-                    'form' => $form,
-                ]);
-            }
-
-            // Validation : heure d'arrivée > heure de départ
-            if ($horaire->getHeureArrivee() <= $horaire->getHeureDepart()) {
-                $this->addFlash('error', 'L\'heure d\'arrivée doit être postérieure à l\'heure de départ.');
-                return $this->render('horaire/edit.html.twig', [
-                    'horaire' => $horaire,
-                    'form' => $form,
-                ]);
-            }
-
-            $horaire->setDateModification(new \DateTime());
-            
             $entityManager->flush();
 
-            $this->addFlash('success', 'L\'horaire ' . $horaire->getTrajet() . ' a été modifié avec succès !');
+            $this->addFlash('success', 'Horaire modifié avec succès !');
 
             return $this->redirectToRoute('admin_horaire_index');
         }
@@ -160,12 +117,11 @@ class HoraireController extends AbstractController
     #[Route('/{id}/supprimer', name: 'admin_horaire_delete', methods: ['POST'])]
     public function delete(Request $request, Horaire $horaire, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete' . $horaire->getId(), $request->request->get('_token'))) {
-            $trajet = $horaire->getTrajet();
+        if ($this->isCsrfTokenValid('delete'.$horaire->getId(), $request->request->get('_token'))) {
             $entityManager->remove($horaire);
             $entityManager->flush();
 
-            $this->addFlash('success', 'L\'horaire ' . $trajet . ' a été supprimé avec succès.');
+            $this->addFlash('success', 'Horaire supprimé avec succès !');
         }
 
         return $this->redirectToRoute('admin_horaire_index');
@@ -178,15 +134,13 @@ class HoraireController extends AbstractController
         string $statut,
         EntityManagerInterface $entityManager
     ): Response {
-        if ($this->isCsrfTokenValid('status' . $horaire->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('status'.$horaire->getId(), $request->request->get('_token'))) {
             $horaire->setStatut($statut);
-            $horaire->setDateModification(new \DateTime());
-            
             $entityManager->flush();
 
-            $this->addFlash('success', 'Le statut de l\'horaire a été changé avec succès.');
+            $this->addFlash('success', 'Statut de l\'horaire modifié avec succès !');
         }
 
-        return $this->redirectToRoute('admin_horaire_show', ['id' => $horaire->getId()]);
+        return $this->redirectToRoute('admin_horaire_index');
     }
 }

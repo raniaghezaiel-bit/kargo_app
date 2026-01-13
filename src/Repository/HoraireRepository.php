@@ -21,7 +21,7 @@ class HoraireRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('h')
             ->where('h.statut = :statut')
             ->setParameter('statut', 'actif')
-            ->orderBy('h.villeDepart', 'ASC')
+            ->orderBy('h.dateDepart', 'ASC')
             ->addOrderBy('h.heureDepart', 'ASC')
             ->getQuery()
             ->getResult();
@@ -32,20 +32,43 @@ class HoraireRepository extends ServiceEntityRepository
      */
     public function findByVilles(?string $villeDepart, ?string $villeArrivee): array
     {
-        $qb = $this->createQueryBuilder('h');
+        $qb = $this->createQueryBuilder('h')
+            ->join('h.trajet', 't');
 
         if ($villeDepart) {
-            $qb->andWhere('h.villeDepart = :depart')
+            $qb->andWhere('t.villeDepart = :depart')
                ->setParameter('depart', $villeDepart);
         }
 
         if ($villeArrivee) {
-            $qb->andWhere('h.villeArrivee = :arrivee')
+            $qb->andWhere('t.villeArrivee = :arrivee')
                ->setParameter('arrivee', $villeArrivee);
         }
 
         return $qb->orderBy('h.heureDepart', 'ASC')
                   ->getQuery()
                   ->getResult();
+    }
+
+    /**
+     * Recherche des horaires disponibles pour la réservation
+     */
+    public function findAvailableHoraires(string $villeDepart, string $villeArrivee, \DateTime $date): array
+    {
+        return $this->createQueryBuilder('h')
+            ->join('h.trajet', 't')
+            ->join('h.bus', 'b')
+            ->where('t.villeDepart = :depart')
+            ->andWhere('t.villeArrivee = :arrivee')
+            ->andWhere('h.dateDepart = :date')
+            ->andWhere('h.statut = :statut')
+            ->andWhere('h.placesDisponibles > 0')
+            ->setParameter('depart', $villeDepart)
+            ->setParameter('arrivee', $villeArrivee)
+            ->setParameter('date', $date->format('Y-m-d'))
+            ->setParameter('statut', 'actif')
+            ->orderBy('h.heureDepart', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
 }

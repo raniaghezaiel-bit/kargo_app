@@ -1,0 +1,238 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réservation {{ reservation.numeroReservation }} - Admin{% endblock %}
+
+{% block body %}
+<div class="container py-4" style="padding-top: 100px;">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">
+            <i class="fas fa-ticket-alt text-primary"></i>
+            Réservation #{{ reservation.numeroReservation }}
+        </h1>
+        <a href="{{ path('app_admin_reservations') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Retour à la liste
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- Informations principales -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle"></i> Détails de la réservation
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="text-muted small">Numéro de réservation</label>
+                            <div class="h5 text-primary">{{ reservation.numeroReservation }}</div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="text-muted small">Date de réservation</label>
+                            <div class="fw-bold">{{ reservation.dateReservation|date('d/m/Y à H:i') }}</div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="text-muted small">Nombre de places</label>
+                            <div>
+                                <span class="badge bg-info fs-6">{{ reservation.nombrePlaces }} place(s)</span>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="text-muted small">Montant total</label>
+                            <div class="h5 text-success">{{ reservation.montant }} TND</div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <label class="text-muted small">Statut</label>
+                            <div>
+                                {% if reservation.statut == 'confirmee' %}
+                                    <span class="badge bg-success fs-6">
+                                        <i class="fas fa-check-circle"></i> Confirmée
+                                    </span>
+                                {% elseif reservation.statut == 'annulee' %}
+                                    <span class="badge bg-danger fs-6">
+                                        <i class="fas fa-times-circle"></i> Annulée
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning fs-6">
+                                        <i class="fas fa-clock"></i> En attente
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informations du trajet -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-route"></i> Informations du trajet
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="text-muted small">Ville de départ</label>
+                            <div class="fw-bold fs-5">
+                                <i class="fas fa-map-marker-alt text-primary"></i>
+                                {{ reservation.horaire.trajet.villeDepart }}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="text-muted small">Ville d'arrivée</label>
+                            <div class="fw-bold fs-5">
+                                <i class="fas fa-map-marker-alt text-danger"></i>
+                                {{ reservation.horaire.trajet.villeArrivee }}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="text-muted small">Date de départ</label>
+                            <div class="fw-bold">{{ reservation.horaire.dateDepart|date('d/m/Y') }}</div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="text-muted small">Heure de départ</label>
+                            <div class="fw-bold">{{ reservation.horaire.heureDepart|date('H:i') }}</div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="text-muted small">Heure d'arrivée</label>
+                            <div class="fw-bold">{{ reservation.horaire.heureArrivee|date('H:i') }}</div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="text-muted small">Durée du trajet</label>
+                            <div class="fw-bold">{{ reservation.horaire.trajet.duree }}</div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <label class="text-muted small">Bus</label>
+                            <div class="fw-bold">
+                                <i class="fas fa-bus text-primary"></i>
+                                {{ reservation.horaire.bus.numeroImmatriculation }} - 
+                                {{ reservation.horaire.bus.modele }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informations passager -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user"></i> Informations passager
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="avatar-circle bg-primary text-white mb-2">
+                            {{ reservation.passager.prenom|first }}{{ reservation.passager.nom|first }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="text-muted small">Nom complet</label>
+                        <div class="fw-bold">
+                            {{ reservation.passager.nom }} {{ reservation.passager.prenom }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="text-muted small">Email</label>
+                        <div>
+                            <a href="mailto:{{ reservation.passager.email }}">
+                                <i class="fas fa-envelope"></i> {{ reservation.passager.email }}
+                            </a>
+                        </div>
+                    </div>
+                    
+                    {% if reservation.passager.telephone %}
+                        <div class="mb-3">
+                            <label class="text-muted small">Téléphone</label>
+                            <div>
+                                <i class="fas fa-phone"></i> {{ reservation.passager.telephone }}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- QR Code -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-qrcode"></i> QR Code
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="qr-code-placeholder bg-light p-4 rounded">
+                        <i class="fas fa-qrcode fa-5x text-muted mb-3"></i>
+                        <p class="text-muted mb-0">{{ reservation.qrCode }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            {% if reservation.statut == 'confirmee' %}
+                <div class="card border-0 shadow-sm mt-4 border-danger">
+                    <div class="card-body">
+                        <h6 class="text-danger mb-3">Zone dangereuse</h6>
+                        <form method="post" 
+                              action="{{ path('app_admin_reservation_cancel', {'id': reservation.id}) }}" 
+                              onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
+                            <button type="submit" class="btn btn-danger w-100">
+                                <i class="fas fa-ban"></i> Annuler la réservation
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .avatar-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: bold;
+    }
+    
+    .card {
+        border-radius: 12px;
+    }
+    
+    .qr-code-placeholder {
+        border: 2px dashed #dee2e6;
+    }
+    
+    label.small {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.25rem;
+    }
+</style>
+{% endblock %}
