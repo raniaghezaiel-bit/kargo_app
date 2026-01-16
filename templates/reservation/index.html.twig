@@ -1,0 +1,168 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Réservations - Kar&Go{% endblock %}
+
+{% block body %}
+<div class="container py-5" style="padding-top: 100px;">
+    
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-2">
+                <i class="fas fa-ticket-alt text-primary"></i>
+                Mes Réservations
+            </h1>
+            <p class="text-muted">Gérer mes billets de bus</p>
+        </div>
+        <a href="{{ path('app_dashboard') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Retour au dashboard
+        </a>
+    </div>
+
+    <!-- Liste des réservations -->
+    {% if reservations is empty %}
+        <div class="card border-0 shadow-sm text-center py-5">
+            <div class="card-body">
+                <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+                <h4 class="text-muted mb-3">Aucune réservation</h4>
+                <p class="text-muted mb-4">Vous n'avez pas encore effectué de réservation</p>
+                <a href="{{ path('app_home') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-search"></i> Rechercher un trajet
+                </a>
+            </div>
+        </div>
+    {% else %}
+        <div class="row g-4">
+            {% for reservation in reservations %}
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm reservation-card">
+                        <div class="card-body p-4">
+                            <div class="row align-items-center">
+                                <!-- Info trajet -->
+                                <div class="col-lg-6">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="reservation-icon me-3">
+                                            <i class="fas fa-bus"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-1">
+                                                <i class="fas fa-map-marker-alt text-primary"></i>
+                                                {{ reservation.horaire.villeDepart }}
+                                                <i class="fas fa-arrow-right text-muted mx-2"></i>
+                                                <i class="fas fa-map-marker-alt text-danger"></i>
+                                                {{ reservation.horaire.villeArrivee }}
+                                            </h5>
+                                            <p class="text-muted mb-0 small">
+                                                <i class="fas fa-calendar"></i>
+                                                {{ reservation.dateReservation|date('d/m/Y') }} à 
+                                                {{ reservation.horaire.heureDepart|date('H:i') }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <span class="badge bg-secondary">
+                                            <i class="fas fa-hashtag"></i> {{ reservation.numeroReservation }}
+                                        </span>
+                                        <span class="badge bg-info">
+                                            <i class="fas fa-users"></i> {{ reservation.nombrePlaces }} place(s)
+                                        </span>
+                                        <span class="badge bg-primary">
+                                            <i class="fas fa-bus"></i> {{ reservation.horaire.bus.numeroImmatriculation }}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Info réservation -->
+                                <div class="col-lg-3 text-lg-center my-3 my-lg-0">
+                                    <div class="mb-2">
+                                        {% if reservation.statut == 'confirmee' %}
+                                            <span class="badge bg-success fs-6 px-3 py-2">
+                                                <i class="fas fa-check-circle"></i> Confirmée
+                                            </span>
+                                        {% elseif reservation.statut == 'annulee' %}
+                                            <span class="badge bg-danger fs-6 px-3 py-2">
+                                                <i class="fas fa-times-circle"></i> Annulée
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-warning fs-6 px-3 py-2">
+                                                <i class="fas fa-clock"></i> En attente
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                    <h3 class="text-success mb-0">{{ reservation.montant }} TND</h3>
+                                    <small class="text-muted">Montant total</small>
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="col-lg-3 text-lg-end">
+                                    <div class="d-grid gap-2">
+                                        <a href="{{ path('app_reservation_show', {'id': reservation.id}) }}" 
+                                           class="btn btn-outline-primary">
+                                            <i class="fas fa-eye"></i> Voir détails
+                                        </a>
+                                        
+                                        {% if reservation.statut == 'confirmee' %}
+                                            <form method="post" 
+                                                  action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}"
+                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
+                                                <button type="submit" class="btn btn-outline-danger w-100">
+                                                    <i class="fas fa-ban"></i> Annuler
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .reservation-card {
+        transition: all 0.3s ease;
+        border-radius: 15px;
+    }
+
+    .reservation-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .reservation-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .badge {
+        font-weight: 500;
+    }
+
+    h3, h5 {
+        font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+        .reservation-icon {
+            width: 50px;
+            height: 50px;
+            font-size: 1.25rem;
+        }
+    }
+</style>
+{% endblock %}

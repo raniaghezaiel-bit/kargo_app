@@ -1,69 +1,307 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Dashboard Passager - Kar&Go{% endblock %}
+{% block title %}Mon Espace - Kar&Go{% endblock %}
 
-{% block content %}
-<div class="container-fluid" style="background-color: #1abc9c; padding-top: 40px; padding-bottom: 40px;">
-    <div class="container">
-        <div class="row mb-5">
-            <div class="col-md-12">
-                <div class="card shadow-lg border-0" style="border-radius: 15px;">
-                    <div class="card-body p-5 text-center">
-                        <div style="font-size: 80px; color: #1abc9c; margin-bottom: 20px;">
-                            <i class="fas fa-user-circle"></i>
+{% block body %}
+<div class="passager-dashboard-container">
+    <div class="container-fluid px-4 py-4">
+        
+        <!-- Passager Info Card -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div class="card-body p-4 text-white">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <div class="d-flex align-items-center">
+                                    <div class="passager-avatar">
+                                        {{ app.user.prenom|first }}{{ app.user.nom|first }}
+                                    </div>
+                                    <div class="ms-4">
+                                        <h3 class="mb-1">Bienvenue, {{ app.user.prenom }} !</h3>
+                                        <p class="mb-2 opacity-75">
+                                            <i class="fas fa-user"></i> Passager
+                                        </p>
+                                        <div class="passager-contact-info">
+                                            <span class="me-3">
+                                                <i class="fas fa-envelope"></i> {{ app.user.email }}
+                                            </span>
+                                            {% if app.user.telephone %}
+                                                <span>
+                                                    <i class="fas fa-phone"></i> {{ app.user.telephone }}
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                <a href="{{ path('app_home') }}" class="btn btn-light btn-lg">
+                                    <i class="fas fa-search"></i> Rechercher un trajet
+                                </a>
+                            </div>
                         </div>
-                        <h2 class="mb-3">Bienvenue, {{ app.user.nom }} {{ app.user.prenom }}</h2>
-                        <span class="badge" style="background-color: #27ae60; padding: 10px 20px; font-size: 1rem;">
-                            <i class="fas fa-ticket-alt"></i> Passager
-                        </span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row mb-5">
-            <div class="col-md-8">
-                <div class="card shadow-lg border-0" style="border-radius: 15px;">
-                    <div class="card-header" style="background-color: #f8f9fa; border-bottom: 2px solid #1abc9c; border-radius: 15px 15px 0 0;">
-                        <h5 class="mb-0">
-                            <i class="fas fa-info-circle"></i> Informations du compte
-                        </h5>
-                    </div>
-                    <div class="card-body p-4">
-                        <div class="row">
-                            <div class="col-md-6 mb-4">
-                                <h6 class="text-muted mb-2"><i class="fas fa-user"></i> Nom</h6>
-                                <p class="h6"><strong>{{ app.user.nom }} {{ app.user.prenom }}</strong></p>
+        <!-- Quick Actions -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <a href="{{ path('app_reservations') }}" class="text-decoration-none">
+                    <div class="card border-0 shadow-sm action-card h-100">
+                        <div class="card-body p-4 text-center">
+                            <div class="action-icon bg-primary mb-3">
+                                <i class="fas fa-ticket-alt fa-2x"></i>
                             </div>
-                            <div class="col-md-6 mb-4">
-                                <h6 class="text-muted mb-2"><i class="fas fa-envelope"></i> Email</h6>
-                                <p class="h6"><strong>{{ app.user.email }}</strong></p>
-                            </div>
-                            <div class="col-md-6">
-                                <h6 class="text-muted mb-2"><i class="fas fa-phone"></i> Téléphone</h6>
-                                <p class="h6"><strong>{{ app.user.numeroTelephone }}</strong></p>
-                            </div>
+                            <h5 class="mb-2">Mes Réservations</h5>
+                            <p class="text-muted mb-0">Voir et gérer mes billets</p>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
 
             <div class="col-md-4">
-                <div class="card shadow-lg border-0" style="border-radius: 15px;">
-                    <div class="card-header" style="background-color: #f8f9fa; border-bottom: 2px solid #27ae60; border-radius: 15px 15px 0 0;">
-                        <h5 class="mb-0"><i class="fas fa-lightning-bolt"></i> Actions rapides</h5>
+                <a href="{{ path('app_home') }}" class="text-decoration-none">
+                    <div class="card border-0 shadow-sm action-card h-100">
+                        <div class="card-body p-4 text-center">
+                            <div class="action-icon bg-success mb-3">
+                                <i class="fas fa-plus-circle fa-2x"></i>
+                            </div>
+                            <h5 class="mb-2">Nouvelle Réservation</h5>
+                            <p class="text-muted mb-0">Réserver un nouveau trajet</p>
+                        </div>
                     </div>
-                    <div class="card-body p-4">
-                        <button class="btn btn-outline-primary w-100 mb-3" style="border-radius: 8px;" disabled>
-                            <i class="fas fa-search"></i> Rechercher (bientôt)
-                        </button>
-                        <button class="btn btn-outline-success w-100 mb-3" style="border-radius: 8px;" disabled>
-                            <i class="fas fa-ticket-alt"></i> Mes réservations (bientôt)
-                        </button>
+                </a>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm action-card h-100">
+                    <div class="card-body p-4 text-center">
+                        <div class="action-icon bg-info mb-3">
+                            <i class="fas fa-user-circle fa-2x"></i>
+                        </div>
+                        <h5 class="mb-2">Mon Profil</h5>
+                        <p class="text-muted mb-0">Mes informations personnelles</p>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Main Content -->
+        <div class="row g-4">
+            <!-- Mes Réservations -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-0 py-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="fas fa-history text-primary"></i>
+                                Mes Dernières Réservations
+                            </h5>
+                            <a href="{{ path('app_reservations') }}" class="btn btn-sm btn-outline-primary">
+                                Voir tout
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            {% if reservations is empty %}
+                                <div class="text-center py-5">
+                                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                                    <h6 class="text-muted">Aucune réservation</h6>
+                                    <p class="text-muted mb-3">Vous n'avez pas encore effectué de réservation</p>
+                                    <a href="{{ path('app_home') }}" class="btn btn-primary">
+                                        <i class="fas fa-search"></i> Rechercher un trajet
+                                    </a>
+                                </div>
+                            {% else %}
+                                {% for reservation in reservations %}
+                                    <div class="list-group-item list-group-item-action">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6 class="mb-1">
+                                                    <i class="fas fa-map-marker-alt text-primary"></i>
+                                                    {{ reservation.horaire.villeDepart }}
+                                                    <i class="fas fa-arrow-right text-muted mx-2"></i>
+                                                    <i class="fas fa-map-marker-alt text-danger"></i>
+                                                    {{ reservation.horaire.villeArrivee }}
+                                                </h6>
+                                                <p class="mb-1 text-muted small">
+                                                    <i class="fas fa-calendar"></i>
+                                                    {{ reservation.dateReservation|date('d/m/Y') }} à 
+                                                    {{ reservation.horaire.heureDepart|date('H:i') }}
+                                                </p>
+                                                <span class="badge bg-secondary">
+                                                    {{ reservation.numeroReservation }}
+                                                </span>
+                                            </div>
+                                            <div class="text-end">
+                                                {% if reservation.statut == 'confirmee' %}
+                                                    <span class="badge bg-success mb-2">Confirmée</span>
+                                                {% else %}
+                                                    <span class="badge bg-danger mb-2">Annulée</span>
+                                                {% endif %}
+                                                <div class="fw-bold text-success">{{ reservation.montant }} TND</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Info -->
+            <div class="col-lg-4">
+                <!-- Search Widget -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="mb-3">
+                            <i class="fas fa-search text-primary"></i>
+                            Recherche Rapide
+                        </h5>
+                        <form action="{{ path('app_search_trajet') }}" method="GET">
+                            <div class="mb-3">
+                                <label class="form-label small">Départ</label>
+                                <select name="villeDepart" class="form-select" required>
+                                    <option value="">Choisir une ville</option>
+                                    <option value="Tunis">Tunis</option>
+                                    <option value="Sfax">Sfax</option>
+                                    <option value="Sousse">Sousse</option>
+                                    <option value="Kairouan">Kairouan</option>
+                                    <option value="Bizerte">Bizerte</option>
+                                    <option value="Gabès">Gabès</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small">Arrivée</label>
+                                <select name="villeArrivee" class="form-select" required>
+                                    <option value="">Choisir une ville</option>
+                                    <option value="Tunis">Tunis</option>
+                                    <option value="Sfax">Sfax</option>
+                                    <option value="Sousse">Sousse</option>
+                                    <option value="Kairouan">Kairouan</option>
+                                    <option value="Bizerte">Bizerte</option>
+                                    <option value="Gabès">Gabès</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small">Date</label>
+                                <input type="date" name="dateDepart" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search"></i> Rechercher
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Help Card -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h5 class="mb-3">
+                            <i class="fas fa-question-circle text-info"></i>
+                            Besoin d'aide ?
+                        </h5>
+                        <p class="text-muted mb-3">
+                            Notre équipe est disponible pour vous aider
+                        </p>
+                        <div class="d-grid gap-2">
+                            <a href="mailto:support@kargo.tn" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-envelope"></i> Contacter le support
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .passager-dashboard-container {
+        background: #f8fafc;
+        min-height: 100vh;
+        padding-top: 80px;
+    }
+
+    .passager-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: bold;
+        border: 3px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .passager-contact-info {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    .action-card {
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .action-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .action-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+
+    .card {
+        border-radius: 15px;
+    }
+
+    .list-group-item {
+        border-left: none;
+        border-right: none;
+        padding: 1rem 1.5rem;
+        transition: background-color 0.2s;
+    }
+
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    h3, h5 {
+        font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+        .passager-dashboard-container {
+            padding-top: 100px;
+        }
+
+        .passager-avatar {
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+        }
+    }
+</style>
 {% endblock %}
