@@ -46,126 +46,142 @@
             </div>
         </div>
 
-        <!-- Quick Actions -->
+        <!-- Quick Stats -->
         <div class="row g-4 mb-4">
-            <div class="col-md-4">
-                <a href="{{ path('app_reservations') }}" class="text-decoration-none">
-                    <div class="card border-0 shadow-sm action-card h-100">
-                        <div class="card-body p-4 text-center">
-                            <div class="action-icon bg-primary mb-3">
-                                <i class="fas fa-ticket-alt fa-2x"></i>
-                            </div>
-                            <h5 class="mb-2">Mes Réservations</h5>
-                            <p class="text-muted mb-0">Voir et gérer mes billets</p>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm stat-card">
+                    <div class="card-body text-center p-4">
+                        <div class="stat-icon-wrapper bg-primary mb-3">
+                            <i class="fas fa-ticket-alt fa-2x"></i>
                         </div>
-                    </div>
-                </a>
-            </div>
-
-            <div class="col-md-4">
-                <a href="{{ path('app_home') }}" class="text-decoration-none">
-                    <div class="card border-0 shadow-sm action-card h-100">
-                        <div class="card-body p-4 text-center">
-                            <div class="action-icon bg-success mb-3">
-                                <i class="fas fa-plus-circle fa-2x"></i>
-                            </div>
-                            <h5 class="mb-2">Nouvelle Réservation</h5>
-                            <p class="text-muted mb-0">Réserver un nouveau trajet</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm action-card h-100">
-                    <div class="card-body p-4 text-center">
-                        <div class="action-icon bg-info mb-3">
-                            <i class="fas fa-user-circle fa-2x"></i>
-                        </div>
-                        <h5 class="mb-2">Mon Profil</h5>
-                        <p class="text-muted mb-0">Mes informations personnelles</p>
+                        <h3 class="mb-1">{{ reservations|length }}</h3>
+                        <p class="text-muted mb-0">Mes réservations</p>
                     </div>
                 </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm stat-card">
+                    <div class="card-body text-center p-4">
+                        <div class="stat-icon-wrapper bg-success mb-3">
+                            <i class="fas fa-check-circle fa-2x"></i>
+                        </div>
+                        <h3 class="mb-1">{{ reservations|filter(r => r.statut == 'confirmee')|length }}</h3>
+                        <p class="text-muted mb-0">Confirmées</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <a href="{{ path('app_home') }}" class="text-decoration-none">
+                    <div class="card border-0 shadow-sm action-card h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="stat-icon-wrapper bg-info mb-3">
+                                <i class="fas fa-plus-circle fa-2x"></i>
+                            </div>
+                            <h5 class="mb-0">Nouvelle réservation</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-3">
+                <a href="{{ path('app_reservations') }}" class="text-decoration-none">
+                    <div class="card border-0 shadow-sm action-card h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="stat-icon-wrapper bg-warning mb-3">
+                                <i class="fas fa-list fa-2x"></i>
+                            </div>
+                            <h5 class="mb-0">Voir tout</h5>
+                        </div>
+                    </div>
+                </a>
             </div>
         </div>
 
         <!-- Main Content -->
         <div class="row g-4">
-            <!-- Mes Réservations -->
+            <!-- Recent Activity -->
             <div class="col-lg-8">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white border-0 py-3">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">
-                                <i class="fas fa-history text-primary"></i>
-                                Mes Dernières Réservations
-                            </h5>
-                            <a href="{{ path('app_reservations') }}" class="btn btn-sm btn-outline-primary">
-                                Voir tout
-                            </a>
-                        </div>
+                        <h5 class="mb-0">
+                            <i class="fas fa-clock text-primary"></i>
+                            Activité Récente
+                        </h5>
                     </div>
-                    <div class="card-body p-0">
-                        <div class="list-group list-group-flush">
-                            {% if reservations is empty %}
-                                <div class="text-center py-5">
-                                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                                    <h6 class="text-muted">Aucune réservation</h6>
-                                    <p class="text-muted mb-3">Vous n'avez pas encore effectué de réservation</p>
-                                    <a href="{{ path('app_home') }}" class="btn btn-primary">
-                                        <i class="fas fa-search"></i> Rechercher un trajet
-                                    </a>
-                                </div>
-                            {% else %}
-                                {% for reservation in reservations %}
-                                    <div class="list-group-item list-group-item-action">
-                                        <div class="d-flex justify-content-between align-items-start">
-                                            <div>
-                                                <h6 class="mb-1">
-                                                    <i class="fas fa-map-marker-alt text-primary"></i>
-                                                    {{ reservation.horaire.villeDepart }}
-                                                    <i class="fas fa-arrow-right text-muted mx-2"></i>
-                                                    <i class="fas fa-map-marker-alt text-danger"></i>
-                                                    {{ reservation.horaire.villeArrivee }}
-                                                </h6>
-                                                <p class="mb-1 text-muted small">
-                                                    <i class="fas fa-calendar"></i>
-                                                    {{ reservation.dateReservation|date('d/m/Y') }} à 
-                                                    {{ reservation.horaire.heureDepart|date('H:i') }}
-                                                </p>
-                                                <span class="badge bg-secondary">
-                                                    {{ reservation.numeroReservation }}
+                    <div class="card-body p-4">
+                        {% if reservations is empty %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+                                <h5 class="text-muted mb-3">Aucune réservation</h5>
+                                <p class="text-muted mb-4">Commencez par rechercher un trajet</p>
+                                <a href="{{ path('app_home') }}" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-search"></i> Rechercher maintenant
+                                </a>
+                            </div>
+                        {% else %}
+                            <div class="timeline">
+                                {% for reservation in reservations|slice(0, 3) %}
+                                    <div class="timeline-item">
+                                        <div class="timeline-marker {{ reservation.statut == 'confirmee' ? 'bg-success' : 'bg-danger' }}">
+                                            <i class="fas {{ reservation.statut == 'confirmee' ? 'fa-check' : 'fa-times' }}"></i>
+                                        </div>
+                                        <div class="timeline-content">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <div>
+                                                    <h6 class="mb-1">
+                                                        {{ reservation.horaire.villeDepart }} → {{ reservation.horaire.villeArrivee }}
+                                                    </h6>
+                                                    <p class="text-muted small mb-1">
+                                                        <i class="fas fa-calendar"></i> {{ reservation.dateReservation|date('d/m/Y à H:i') }}
+                                                    </p>
+                                                </div>
+                                                <span class="badge {{ reservation.statut == 'confirmee' ? 'bg-success' : 'bg-danger' }}">
+                                                    {{ reservation.statut|capitalize }}
                                                 </span>
                                             </div>
-                                            <div class="text-end">
-                                                {% if reservation.statut == 'confirmee' %}
-                                                    <span class="badge bg-success mb-2">Confirmée</span>
-                                                {% else %}
-                                                    <span class="badge bg-danger mb-2">Annulée</span>
-                                                {% endif %}
-                                                <div class="fw-bold text-success">{{ reservation.montant }} TND</div>
+                                            <div class="d-flex gap-2">
+                                                <span class="badge bg-light text-dark">
+                                                    {{ reservation.numeroReservation }}
+                                                </span>
+                                                <span class="badge bg-light text-dark">
+                                                    {{ reservation.nombrePlaces }} place(s)
+                                                </span>
+                                                <span class="badge bg-light text-dark">
+                                                    {{ reservation.montant }} TND
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
                                 {% endfor %}
+                            </div>
+                            
+                            {% if reservations|length > 3 %}
+                                <div class="text-center mt-4">
+                                    <a href="{{ path('app_reservations') }}" class="btn btn-outline-primary">
+                                        Voir toutes mes réservations ({{ reservations|length }})
+                                    </a>
+                                </div>
                             {% endif %}
-                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
 
-            <!-- Sidebar Info -->
+            <!-- Sidebar -->
             <div class="col-lg-4">
-                <!-- Search Widget -->
+                <!-- Quick Search -->
                 <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h6 class="mb-0">
+                            <i class="fas fa-search"></i> Recherche Rapide
+                        </h6>
+                    </div>
                     <div class="card-body p-4">
-                        <h5 class="mb-3">
-                            <i class="fas fa-search text-primary"></i>
-                            Recherche Rapide
-                        </h5>
                         <form action="{{ path('app_search_trajet') }}" method="GET">
                             <div class="mb-3">
-                                <label class="form-label small">Départ</label>
+                                <label class="form-label small fw-bold">Départ</label>
                                 <select name="villeDepart" class="form-select" required>
                                     <option value="">Choisir une ville</option>
                                     <option value="Tunis">Tunis</option>
@@ -177,7 +193,7 @@
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label small">Arrivée</label>
+                                <label class="form-label small fw-bold">Arrivée</label>
                                 <select name="villeArrivee" class="form-select" required>
                                     <option value="">Choisir une ville</option>
                                     <option value="Tunis">Tunis</option>
@@ -189,8 +205,9 @@
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label small">Date</label>
-                                <input type="date" name="dateDepart" class="form-control" required>
+                                <label class="form-label small fw-bold">Date</label>
+                                <input type="date" name="dateDepart" class="form-control" required 
+                                       min="{{ "now"|date('Y-m-d') }}">
                             </div>
                             <button type="submit" class="btn btn-primary w-100">
                                 <i class="fas fa-search"></i> Rechercher
@@ -199,18 +216,16 @@
                     </div>
                 </div>
 
-                <!-- Help Card -->
+                <!-- Help -->
                 <div class="card border-0 shadow-sm">
                     <div class="card-body p-4">
-                        <h5 class="mb-3">
-                            <i class="fas fa-question-circle text-info"></i>
-                            Besoin d'aide ?
-                        </h5>
-                        <p class="text-muted mb-3">
-                            Notre équipe est disponible pour vous aider
-                        </p>
-                        <div class="d-grid gap-2">
-                            <a href="mailto:support@kargo.tn" class="btn btn-outline-primary btn-sm">
+                        <div class="text-center mb-3">
+                            <i class="fas fa-headset fa-3x text-info mb-3"></i>
+                            <h6 class="mb-2">Besoin d'aide ?</h6>
+                            <p class="text-muted small">Notre équipe est à votre écoute</p>
+                        </div>
+                        <div class="d-grid">
+                            <a href="mailto:support@kargo.tn" class="btn btn-outline-info">
                                 <i class="fas fa-envelope"></i> Contacter le support
                             </a>
                         </div>
@@ -253,19 +268,20 @@
         opacity: 0.9;
     }
 
-    .action-card {
+    .stat-card, .action-card {
         transition: all 0.3s ease;
         cursor: pointer;
+        border-radius: 15px;
     }
 
-    .action-card:hover {
+    .stat-card:hover, .action-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
     }
 
-    .action-icon {
-        width: 80px;
-        height: 80px;
+    .stat-icon-wrapper {
+        width: 70px;
+        height: 70px;
         border-radius: 50%;
         display: inline-flex;
         align-items: center;
@@ -277,18 +293,56 @@
         border-radius: 15px;
     }
 
-    .list-group-item {
-        border-left: none;
-        border-right: none;
-        padding: 1rem 1.5rem;
-        transition: background-color 0.2s;
+    .timeline {
+        position: relative;
+        padding-left: 50px;
     }
 
-    .list-group-item:hover {
-        background-color: #f8f9fa;
+    .timeline-item {
+        position: relative;
+        padding-bottom: 2rem;
     }
 
-    h3, h5 {
+    .timeline-item:last-child {
+        padding-bottom: 0;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -35px;
+        top: 35px;
+        width: 2px;
+        height: calc(100% - 20px);
+        background: #e5e7eb;
+    }
+
+    .timeline-item:last-child::before {
+        display: none;
+    }
+
+    .timeline-marker {
+        position: absolute;
+        left: -44px;
+        top: 0;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.7rem;
+    }
+
+    .timeline-content {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 10px;
+        border-left: 3px solid #667eea;
+    }
+
+    h3, h5, h6 {
         font-weight: 700;
     }
 
@@ -301,6 +355,11 @@
             width: 60px;
             height: 60px;
             font-size: 1.5rem;
+        }
+
+        .stat-icon-wrapper {
+            width: 60px;
+            height: 60px;
         }
     }
 </style>
